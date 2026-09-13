@@ -523,6 +523,24 @@ h4{
 .q-name{font-weight:700;margin:0;color:var(--ink)}
 .q-role{font-size:15px;color:var(--muted);margin:2px 0 0}
 
+/* ---------- пожертвования ---------- */
+.give{display:grid;grid-template-columns:280px 1fr;gap:clamp(32px,4vw,60px);align-items:start}
+.qr-card{background:#fff;border:1px solid var(--line);padding:18px;text-align:center}
+.qr-card img{width:100%;height:auto;display:block}
+.qr-card figcaption{
+  font-family:var(--sans);font-size:14px;color:var(--muted);
+  margin-top:12px;line-height:1.4;
+}
+.give .code{
+  display:inline-block;margin-top:4px;
+  font-weight:700;font-size:clamp(21px,1.6vw,26px);
+  letter-spacing:.04em;font-variant-numeric:tabular-nums;color:var(--ink);
+}
+@media (max-width:767px){
+  .give{grid-template-columns:1fr}
+  .qr-card{max-width:260px;margin:0 auto}
+}
+
 /* ---------- реквизиты ---------- */
 .dl{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(28px,3vw,44px) clamp(40px,6vw,90px)}
 .dl > div{border-top:1px solid var(--line);padding-top:20px}
@@ -564,41 +582,7 @@ h4{
   .field input,.field textarea{font-size:16px}
 }
 
-/* ---------- пожертвования ---------- */
-.give{display:grid;grid-template-columns:1.25fr .75fr;gap:clamp(32px,5vw,72px);align-items:start}
-.give ol{margin:0 0 28px;padding:0;list-style:none;counter-reset:step}
-.give ol li{
-  position:relative;counter-increment:step;
-  padding:0 0 18px 42px;
-}
-.give ol li::before{
-  content:counter(step);
-  position:absolute;left:0;top:1px;
-  width:28px;height:28px;border-radius:50%;
-  background:var(--ink);color:#fff;
-  font-family:var(--sans);font-size:13px;font-weight:700;
-  display:flex;align-items:center;justify-content:center;
-}
-.give ol li:last-child{padding-bottom:0}
-.code{
-  display:inline-block;margin-top:6px;
-  font-weight:700;font-size:clamp(22px,1.6vw,28px);
-  letter-spacing:.04em;font-variant-numeric:tabular-nums;color:var(--ink);
-}
-.qr-card{
-  background:#fff;border:1px solid var(--line);
-  padding:20px;text-align:center;
-  max-width:300px;
-}
-.qr-card img{width:100%;height:auto;image-rendering:crisp-edges}
-.qr-card figcaption{
-  font-family:var(--sans);font-size:14px;color:var(--muted);
-  margin-top:14px;line-height:1.4;
-}
-@media (max-width:767px){
-  .give{grid-template-columns:1fr}
-  .qr-card{margin:0 auto;max-width:260px}
-}
+
 .num{font-variant-numeric:tabular-nums;letter-spacing:.02em;word-break:break-word;font-weight:600}
 
 /* ---------- подвал ---------- */
