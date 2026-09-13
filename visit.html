@@ -536,9 +536,14 @@ h4{
   font-weight:700;font-size:clamp(21px,1.6vw,26px);
   letter-spacing:.04em;font-variant-numeric:tabular-nums;color:var(--ink);
 }
+.give-btn{margin:clamp(22px,2.4vw,30px) 0 0}
+.give-hint{font-size:15px;color:var(--muted);margin:12px 0 0;max-width:44ch}
 @media (max-width:767px){
   .give{grid-template-columns:1fr}
-  .qr-card{max-width:260px;margin:0 auto}
+  /* на телефоне QR почти бесполезен — сначала кнопка, код ниже */
+  .give > div{order:1}
+  .give .qr-card{order:2;max-width:240px;margin:clamp(28px,5vw,40px) auto 0}
+  .give-btn .btn{width:100%}
 }
 
 /* ---------- реквизиты ---------- */
