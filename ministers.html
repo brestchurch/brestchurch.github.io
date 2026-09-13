@@ -474,6 +474,38 @@ h4{
   .people,.people--three{grid-template-columns:1fr}
 }
 
+/* ---------- двухколоночный блок ---------- */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,5vw,72px);align-items:start}
+.split .figure img{width:100%}
+@media (max-width:900px){ .split{grid-template-columns:1fr} }
+
+/* ---------- как проходит собрание ---------- */
+.steps{margin:0;padding:0;list-style:none;counter-reset:step}
+.steps li{
+  position:relative;counter-increment:step;
+  padding:0 0 clamp(22px,2.4vw,30px) clamp(54px,5vw,68px);
+  border-left:1px solid var(--line);
+  margin-left:18px;
+}
+.steps li:last-child{border-left-color:transparent;padding-bottom:0}
+.steps li::before{
+  content:counter(step);
+  position:absolute;left:-19px;top:-2px;
+  width:38px;height:38px;border-radius:50%;
+  background:var(--ink);color:#fff;
+  font-family:var(--sans);font-size:14px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+}
+.steps h4{margin:4px 0 .35em}
+.steps p{color:var(--muted);margin:0}
+
+/* ---------- спокойные обещания ---------- */
+.calm{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(24px,3vw,40px)}
+.calm div{border-top:2px solid var(--ink);padding-top:20px}
+.calm h4{margin:0 0 .4em}
+.calm p{color:var(--muted);margin:0}
+@media (max-width:767px){ .calm{grid-template-columns:1fr} }
+
 /* ---------- отзывы ---------- */
 .quotes{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(36px,4vw,64px)}
 .q{display:flex;flex-direction:column}
@@ -683,6 +715,48 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
   *{transition:none!important;animation:none!important;scroll-behavior:auto!important}
 }
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Church",
+  "name": "Библейская церковь г. Бреста",
+  "alternateName": "Брестская Библейская церковь ЕХБ",
+  "url": "https://biblechurch.by/",
+  "logo": "https://biblechurch.by/assets/favicon.png",
+  "image": "https://biblechurch.by/assets/favicon.png",
+  "email": "biblechurch.by@gmail.com",
+  "slogan": "К недоступному Богу, через доступную церковь",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "ул. Наганова, 10",
+    "addressLocality": "Брест",
+    "addressRegion": "Брестская область",
+    "addressCountry": "BY"
+  },
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": "Sunday",
+      "opens": "11:00",
+      "closes": "12:30",
+      "description": "Воскресное собрание"
+    },
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": "Sunday",
+      "opens": "10:00",
+      "closes": "11:00",
+      "description": "Воскресная школа для детей"
+    }
+  ],
+  "sameAs": [
+    "https://www.instagram.com/brestbiblechurch/",
+    "https://www.facebook.com/brestbiblechurch/",
+    "https://www.youtube.com/channel/UCNiK1NCGnS-ebp_00e8JMTg",
+    "https://t.me/brestbiblechurch"
+  ]
+}
+</script>
 </head>
 <body>
 <a class="skip" href="#main">Перейти к содержанию</a>
@@ -699,6 +773,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
 
       <nav class="nav" id="siteNav" aria-label="Основная навигация">
         <ul>
+          <li><a href="visit.html">Первый раз</a></li>
           <li><a href="webelieve.html">Во что мы верим</a></li>
           <li><a href="weappreciate.html">Что мы ценим</a></li>
           <li><a href="ministers.html" aria-current="page" class="is-current">Служители</a></li>
@@ -822,6 +897,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
       <p>© <span id="year">2026</span> Библейская церковь г. Бреста</p>
       <nav aria-label="Навигация в подвале">
         <a href="./">Главная</a>
+        <a href="visit.html">Первый раз</a>
         <a href="webelieve.html">Во что мы верим</a>
         <a href="weappreciate.html">Что мы ценим</a>
         <a href="ministers.html">Служители</a>
