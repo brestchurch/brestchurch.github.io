@@ -201,6 +201,11 @@ h4{
 }
 
 .nav ul{list-style:none;display:flex;align-items:center;gap:clamp(20px,2.4vw,40px);margin:0;padding:0}
+/* шесть пунктов на узком десктопе: ужимаем промежутки, чтобы меню не упиралось в логотип */
+@media (min-width:992px) and (max-width:1180px){
+  .nav ul{gap:16px}
+  .nav a{font-size:15px}
+}
 .nav a{
   font-size:16px;font-weight:500;color:#fff;
   padding:8px 0;border-bottom:1.5px solid transparent;
@@ -499,12 +504,6 @@ h4{
 .steps h4{margin:4px 0 .35em}
 .steps p{color:var(--muted);margin:0}
 
-/* ---------- спокойные обещания ---------- */
-.calm{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(24px,3vw,40px)}
-.calm div{border-top:2px solid var(--ink);padding-top:20px}
-.calm h4{margin:0 0 .4em}
-.calm p{color:var(--muted);margin:0}
-@media (max-width:767px){ .calm{grid-template-columns:1fr} }
 
 /* ---------- отзывы ---------- */
 .quotes{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(36px,4vw,64px)}
@@ -762,7 +761,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
 
       <nav class="nav" id="siteNav" aria-label="Основная навигация">
         <ul>
-          <li><a href="visit.html">Первый раз</a></li>
+          <li><a href="visit.html">Впервые у нас</a></li>
           <li><a href="webelieve.html">Во что мы верим</a></li>
           <li><a href="weappreciate.html">Что мы ценим</a></li>
           <li><a href="ministers.html">Служители</a></li>
@@ -839,7 +838,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
       <p>© <span id="year">2026</span> Библейская церковь г. Бреста</p>
       <nav aria-label="Навигация в подвале">
         <a href="./">Главная</a>
-        <a href="visit.html">Первый раз</a>
+        <a href="visit.html">Впервые у нас</a>
         <a href="webelieve.html">Во что мы верим</a>
         <a href="weappreciate.html">Что мы ценим</a>
         <a href="ministers.html">Служители</a>
