@@ -235,7 +235,7 @@ def fix_links(html, current_file):
     for route, fname in sorted(ROUTE2FILE.items(), key=lambda kv: -len(kv[0])):
         target = '/' if fname == 'index.html' else '/' + fname
         html = html.replace(f'href="#{route}"', f'href="{target}"')
-    html = html.replace('href="#/events"', '/events.html')
+    html = html.replace('href="#/events"', 'href="/events.html"')
     return html
 
 for route, fname, title, desc in PAGES:
