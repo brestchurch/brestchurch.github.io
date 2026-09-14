@@ -367,47 +367,78 @@ def shell(title, desc, canonical, body_html, schema=SCHEMA, extra_js=''):
     return out
 
 data = json.load(open('events.json', encoding='utf-8'))
-events = sorted(data['events'], key=lambda e: e['date'], reverse=True)   # новые сверху
+today = _date.today().isoformat()
+
+all_events = data['events']
+upcoming = sorted([e for e in all_events if e['date'] >= today], key=lambda e: e['date'])          # ближайшее первым
+past     = sorted([e for e in all_events if e['date'] <  today], key=lambda e: e['date'], reverse=True)  # свежее первым
 
 def media_src(v):
     return v if v.startswith('http') else '/assets/' + v
 
-# --- лента ---
-rows = []
-for e in events:
+def row(e):
     thumb = f'<img class="event-thumb" loading="lazy" src="{media_src(e["image"])}" alt="">' if e.get('image') else ''
-    rows.append(f"""      <article class="event">
-        <div class="event-date">{ru_date(e['date'])}<span class="event-kind">{_html.escape(e.get('kind',''))}</span></div>
-        <div>
-          {thumb}
-          <h3><a href="/events/{e['slug']}.html">{_html.escape(e['title'])}</a></h3>
-          <p>{_html.escape(e['summary'])}</p>
-          <a class="tlink" href="/events/{e['slug']}.html">Читать</a>
+    return f"""        <article class="event">
+          <div class="event-date">{ru_date(e['date'])}<span class="event-kind">{_html.escape(e.get('kind',''))}</span></div>
+          <div>
+            {thumb}
+            <h3><a href="/events/{e['slug']}.html">{_html.escape(e['title'])}</a></h3>
+            <p>{_html.escape(e['summary'])}</p>
+            <a class="tlink" href="/events/{e['slug']}.html">Подробнее</a>
+          </div>
+        </article>"""
+
+blocks = []
+if upcoming:
+    blocks.append("""    <section class="sec">
+      <div class="wrap narrow">
+        <div class="sec-head">
+          <span class="label">Предстоящие</span>
+          <h2>Что планируется</h2>
         </div>
-      </article>""")
+        <div class="events">
+""" + '\n'.join(row(e) for e in upcoming) + """
+        </div>
+      </div>
+    </section>""")
 
-feed = '\n'.join(rows) if rows else '      <p class="events-empty">Пока записей нет.</p>'
+if past:
+    tone = ' sec--stone' if upcoming else ''
+    blocks.append(f"""    <section class="sec{tone}">
+      <div class="wrap narrow">
+        <div class="sec-head">
+          <span class="label">Архив</span>
+          <h2>Что уже было</h2>
+        </div>
+        <div class="events">
+""" + '\n'.join(row(e) for e in past) + """
+        </div>
+      </div>
+    </section>""")
 
-events_body = f"""  <section class="hero hero--page hero--flat">
+if not blocks:
+    blocks.append("""    <section class="sec">
+      <div class="wrap narrow">
+        <p class="lead events-empty">Здесь будут появляться записи о конференциях, проповедях и встречах общины. Пока их нет — приходите на воскресное собрание в 11:00.</p>
+      </div>
+    </section>""")
+
+events_body = """  <section class="hero hero--page hero--flat">
     <div class="wrap">
-      <span class="label" style="color:var(--accent)">Что происходило в церкви</span>
+      <span class="label" style="color:var(--accent)">Жизнь церкви</span>
       <h1>События</h1>
     </div>
   </section>
 
-  <section class="sec">
-    <div class="wrap narrow">
-      <div class="events">
-{feed}
-      </div>
-    </div>
-  </section>"""
+""" + '\n\n'.join(blocks)
 
 open(os.path.join(OUT, 'events.html'), 'w', encoding='utf-8').write(
-  shell('События церкви — проповеди, конференции, встречи | Библейская церковь, Брест',
-        'Записи о прошедших событиях Брестской Библейской церкви: проповеди, конференции, крещения и встречи общины.',
+  shell('События церкви — конференции, проповеди, встречи | Библейская церковь, Брест',
+        'Предстоящие и прошедшие события Брестской Библейской церкви: конференции, проповеди, крещения и встречи общины.',
         '/events.html', events_body))
-print(f'events.html          записей: {len(events)}')
+print(f'events.html          предстоящих: {len(upcoming)}, прошедших: {len(past)}')
+
+events = all_events   # для карты сайта и отдельных страниц
 
 # --- отдельные страницы ---
 os.makedirs(os.path.join(OUT, 'events'), exist_ok=True)
