@@ -444,7 +444,7 @@ if not blocks:
       </div>
     </section>""")
 
-events_body = """  <section class="hero hero--page hero--flat">
+events_body = """  <section class="hero hero--page hero--events" style="background-image:url('https://images.unsplash.com/photo-1620678835433-37a0ecb02a9f?auto=format&amp;fit=crop&amp;w=2400&amp;q=80')">
     <div class="wrap">
       <span class="label" style="color:var(--accent)">Жизнь церкви</span>
       <h1>События</h1>

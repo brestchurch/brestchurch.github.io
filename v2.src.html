@@ -280,6 +280,9 @@ h4{
 .hero--flat{background:var(--ink)}
 /* кадр обложки «Контактов»: на широком экране в кадре надпись на стене,
    на узком — логотип церкви, иначе от широкого выреза остаётся невнятный фрагмент */
+/* обложка «Событий»: на узком экране сдвигаем кадр к свечам */
+.hero--events{background-position:center 55%}
+@media (max-width:767px){ .hero--events{background-position:72% 78%} }
 .hero--contacts{background-position:center 62%}
 @media (max-width:767px){ .hero--contacts{background-position:center 58%} }
 .hero--flat::after{display:none}
