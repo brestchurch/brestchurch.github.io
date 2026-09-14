@@ -226,6 +226,17 @@ SCHEMA = """<script type="application/ld+json">
 }
 </script>"""
 
+
+DEFAULT_OG = DOMAIN + '/assets/card-bible.jpg'
+
+def og_image(body_html):
+    """Первая фоновая картинка страницы — она же превью при пересылке ссылки."""
+    m = re.search(r"background-image:url\('([^']+)'\)", body_html)
+    if not m:
+        return DEFAULT_OG
+    url = m.group(1).replace('&amp;', '&')
+    return url if url.startswith('http') else DOMAIN + url
+
 # ---------- сборка ----------
 os.makedirs(OUT, exist_ok=True)
 
@@ -259,6 +270,9 @@ for route, fname, title, desc in PAGES:
       '<meta name="theme-color" content="#14120f">',
       f'<meta property="og:title" content="{title}">',
       f'<meta property="og:description" content="{desc}">',
+      f'<meta property="og:image" content="{og_image(body)}">',
+      '<meta name="twitter:card" content="summary_large_image">',
+      f'<meta name="twitter:image" content="{og_image(body)}">',
       '<meta property="og:type" content="website">',
       f'<meta property="og:url" content="{DOMAIN}/{"" if fname=="index.html" else fname[:-5]}">',
       '<meta property="og:locale" content="ru_RU">',
@@ -297,7 +311,11 @@ for route, fname, title, desc in PAGES:
                         ('__P_VEREMCHUK_D__','assets/person-veremchuk-d.jpg'),
                         ('__P_DEMIDOVICH__','assets/person-demidovich.jpg'),
                         ('__P_ROY__','assets/person-roy.jpg'),
-                        ('__P_VEREMCHUK_DAN__','assets/person-veremchuk-dan.jpg')]:
+                        ('__P_VEREMCHUK_DAN__','assets/person-veremchuk-dan.jpg'),
+                        ('__P_IVAN_ASYA__','assets/person-ivan-asya.jpg'),
+                        ('__P_NIKA__','assets/person-nika.jpg'),
+                        ('__P_KRISTINA__','assets/person-kristina.jpg'),
+                        ('__P_IGOR__','assets/person-igor.jpg')]:
         html = html.replace(f'src="data:image/png;base64,{token}"', f'src="/{path}"')
         html = html.replace(f'src="data:image/jpeg;base64,{token}"', f'src="/{path}"')
 
@@ -311,7 +329,9 @@ for route, fname, title, desc in PAGES:
 os.makedirs(os.path.join(OUT, 'assets'), exist_ok=True)
 for f in ['logo-white.png','logo-black.png','favicon.png','apple-touch-icon.png','erip-qr.png','person-simonchik.jpg',
           'person-konyuchko.jpg','person-veremchuk-d.jpg','person-demidovich.jpg',
-          'person-roy.jpg','person-veremchuk-dan.jpg']:
+          'person-roy.jpg','person-veremchuk-dan.jpg',
+          'person-ivan-asya.jpg','person-nika.jpg','person-kristina.jpg','person-igor.jpg',
+          'card-bible.jpg']:
     shutil.copy(os.path.join('assets', f), os.path.join(OUT, 'assets', f))
 
 shutil.copy('favicon.ico', os.path.join(OUT, 'favicon.ico'))
@@ -342,6 +362,9 @@ def shell(title, desc, canonical, body_html, schema=SCHEMA, extra_js=''):
       '<meta name="theme-color" content="#14120f">',
       f'<meta property="og:title" content="{title}">',
       f'<meta property="og:description" content="{desc}">',
+      f'<meta property="og:image" content="{og_image(body_html)}">',
+      '<meta name="twitter:card" content="summary_large_image">',
+      f'<meta name="twitter:image" content="{og_image(body_html)}">',
       '<meta property="og:type" content="article">',
       f'<meta property="og:url" content="{DOMAIN}{canonical}">',
       '<meta property="og:locale" content="ru_RU">',
@@ -519,6 +542,34 @@ for e in events:
             f"/events/{e['slug']}", body, schema=ev_schema))
     print(f'  events/{e["slug"]}.html')
 
+
+
+# ================= СТРАНИЦА 404 =================
+body_404 = """  <section class="hero hero--page hero--flat">
+    <div class="wrap">
+      <span class="label" style="color:var(--accent)">Страница не найдена</span>
+      <h1>Такой страницы нет</h1>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap narrow">
+      <p class="lead">Возможно, адрес набран с опечаткой или страница переехала. Вот что есть на сайте:</p>
+      <div class="btns" style="margin-top:clamp(28px,3vw,40px)">
+        <a class="btn btn--fill" href="/">На главную</a>
+        <a class="btn btn--line" href="/visit">Впервые у нас</a>
+        <a class="btn btn--line" href="/events">События</a>
+        <a class="btn btn--line" href="/contacts">Контакты</a>
+      </div>
+      <p style="margin-top:clamp(30px,3vw,44px)">Если вы перешли по ссылке с нашего сайта и попали сюда — напишите нам, мы почистим.</p>
+    </div>
+  </section>"""
+
+open(os.path.join(OUT, '404.html'), 'w', encoding='utf-8').write(
+  shell('Страница не найдена | Библейская церковь, Брест',
+        'Такой страницы на сайте нет. Перейдите на главную или воспользуйтесь меню.',
+        '/404', body_404))
+print('404.html             готова')
 
 # ---------- robots.txt и sitemap.xml ----------
 open(os.path.join(OUT,'robots.txt'),'w',encoding='utf-8').write(
