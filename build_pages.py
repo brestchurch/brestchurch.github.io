@@ -389,15 +389,36 @@ def row(e):
         </article>"""
 
 blocks = []
+
+# ближайшее событие выносим наверх крупным блоком
 if upcoming:
+    n = upcoming[0]
+    media = f'<img class="next-thumb" src="{media_src(n["image"])}" alt="">' if n.get('image') else ''
+    blocks.append(f"""    <section class="sec">
+      <div class="wrap narrow">
+        <div class="next">
+          <span class="label">Ближайшее событие</span>
+          <p class="next-date">{ru_date(n['date'])} · {_html.escape(n.get('kind',''))}</p>
+          <h2>{_html.escape(n['title'])}</h2>
+          {media}
+          <p class="lead">{_html.escape(n['summary'])}</p>
+          <p style="margin-top:clamp(22px,2.4vw,30px)">
+            <a class="btn btn--fill" href="/events/{n['slug']}.html">Подробнее</a>
+          </p>
+        </div>
+      </div>
+    </section>""")
+
+rest = upcoming[1:]
+if rest:
     blocks.append("""    <section class="sec">
       <div class="wrap narrow">
         <div class="sec-head">
-          <span class="label">Предстоящие</span>
-          <h2>Что планируется</h2>
+          <span class="label">Дальше</span>
+          <h2>Что ещё планируется</h2>
         </div>
         <div class="events">
-""" + '\n'.join(row(e) for e in upcoming) + """
+""" + '\n'.join(row(e) for e in rest) + """
         </div>
       </div>
     </section>""")

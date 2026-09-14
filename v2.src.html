@@ -504,6 +504,15 @@ h4{
 .split .figure img{width:100%}
 @media (max-width:900px){ .split{grid-template-columns:1fr} }
 
+/* ---------- ближайшее событие ---------- */
+.next{border-top:2px solid var(--ink);padding-top:clamp(24px,3vw,34px)}
+.next-date{
+  font-family:var(--sans);font-size:15px;font-weight:600;
+  letter-spacing:.02em;color:var(--label);margin:0 0 .5em;
+}
+.next h2{margin:0 0 .5em}
+.next-thumb{width:100%;max-width:520px;aspect-ratio:3/2;object-fit:cover;margin:0 0 20px;background:var(--stone)}
+
 /* ---------- события ---------- */
 .events{display:grid;gap:0}
 .event{
