@@ -233,9 +233,9 @@ def fix_links(html, current_file):
     """Хеш-маршруты -> корневые адреса. Корневые нужны, чтобы ссылки
     одинаково работали и на верхнем уровне, и внутри /events/."""
     for route, fname in sorted(ROUTE2FILE.items(), key=lambda kv: -len(kv[0])):
-        target = '/' if fname == 'index.html' else '/' + fname
+        target = '/' if fname == 'index.html' else '/' + fname[:-5]   # без .html
         html = html.replace(f'href="#{route}"', f'href="{target}"')
-    html = html.replace('href="#/events"', 'href="/events.html"')
+    html = html.replace('href="#/events"', 'href="/events"')
     return html
 
 for route, fname, title, desc in PAGES:
@@ -255,12 +255,12 @@ for route, fname, title, desc in PAGES:
       '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
       f'<title>{title}</title>',
       f'<meta name="description" content="{desc}">',
-      f'<link rel="canonical" href="{DOMAIN}/{"" if fname=="index.html" else fname}">',
+      f'<link rel="canonical" href="{DOMAIN}/{"" if fname=="index.html" else fname[:-5]}">',
       '<meta name="theme-color" content="#14120f">',
       f'<meta property="og:title" content="{title}">',
       f'<meta property="og:description" content="{desc}">',
       '<meta property="og:type" content="website">',
-      f'<meta property="og:url" content="{DOMAIN}/{"" if fname=="index.html" else fname}">',
+      f'<meta property="og:url" content="{DOMAIN}/{"" if fname=="index.html" else fname[:-5]}">',
       '<meta property="og:locale" content="ru_RU">',
       '<link rel="icon" href="/favicon.ico" sizes="any">',
       '<link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon.png">',
@@ -382,9 +382,9 @@ def row(e):
           <div class="event-date">{ru_date(e['date'])}<span class="event-kind">{_html.escape(e.get('kind',''))}</span></div>
           <div>
             {thumb}
-            <h3><a href="/events/{e['slug']}.html">{_html.escape(e['title'])}</a></h3>
+            <h3><a href="/events/{e['slug']}">{_html.escape(e['title'])}</a></h3>
             <p>{_html.escape(e['summary'])}</p>
-            <a class="tlink" href="/events/{e['slug']}.html">Подробнее</a>
+            <a class="tlink" href="/events/{e['slug']}">Подробнее</a>
           </div>
         </article>"""
 
@@ -403,7 +403,7 @@ if upcoming:
           {media}
           <p class="lead">{_html.escape(n['summary'])}</p>
           <p style="margin-top:clamp(22px,2.4vw,30px)">
-            <a class="btn btn--fill" href="/events/{n['slug']}.html">Подробнее</a>
+            <a class="btn btn--fill" href="/events/{n['slug']}">Подробнее</a>
           </p>
         </div>
       </div>
@@ -456,8 +456,16 @@ events_body = """  <section class="hero hero--page hero--events" style="backgrou
 open(os.path.join(OUT, 'events.html'), 'w', encoding='utf-8').write(
   shell('События церкви — конференции, проповеди, встречи | Библейская церковь, Брест',
         'Предстоящие и прошедшие события Брестской Библейской церкви: конференции, проповеди, крещения и встречи общины.',
-        '/events.html', events_body))
+        '/events', events_body))
 print(f'events.html          предстоящих: {len(upcoming)}, прошедших: {len(past)}')
+
+# папку пересоздаём, иначе удалённые из events.json записи останутся на сайте
+ev_dir = os.path.join(OUT, 'events')
+if os.path.isdir(ev_dir):
+    shutil.rmtree(ev_dir)
+os.makedirs(ev_dir, exist_ok=True)
+# копия внутрь папки: чтобы адрес со слешем (/events/) тоже открывался
+shutil.copy(os.path.join(OUT, 'events.html'), os.path.join(OUT, 'events', 'index.html'))
 
 events = all_events   # для карты сайта и отдельных страниц
 
@@ -480,7 +488,7 @@ for e in events:
         "eventStatus":"https://schema.org/EventScheduled",
         "eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode",
         "description": e['summary'],
-        "url": f"{DOMAIN}/events/{e['slug']}.html",
+        "url": f"{DOMAIN}/events/{e['slug']}",
         "location":{"@type":"Place","name":"Библейская церковь г. Бреста",
                     "address":{"@type":"PostalAddress","streetAddress":"ул. Наганова, 10",
                                "addressLocality":"Брест","addressCountry":"BY"}},
@@ -501,14 +509,14 @@ for e in events:
       <p class="lead">{_html.escape(e['summary'])}</p>
       {paras}
       {video}
-      <p class="article-back"><a class="tlink" href="/events.html">← Все события</a></p>
+      <p class="article-back"><a class="tlink" href="/events">← Все события</a></p>
       </div>
     </div>
   </section>"""
 
     open(os.path.join(OUT, 'events', e['slug'] + '.html'), 'w', encoding='utf-8').write(
       shell(f"{e['title']} | Библейская церковь, Брест", e['summary'],
-            f"/events/{e['slug']}.html", body, schema=ev_schema))
+            f"/events/{e['slug']}", body, schema=ev_schema))
     print(f'  events/{e["slug"]}.html')
 
 
@@ -522,12 +530,12 @@ Sitemap: {DOMAIN}/sitemap.xml
 
 urls = []
 for route, fname, _, _ in PAGES:
-    loc = DOMAIN + '/' + ('' if fname=='index.html' else fname)
+    loc = DOMAIN + '/' + ('' if fname=='index.html' else fname[:-5])
     pri = '1.0' if fname=='index.html' else ('0.3' if fname=='privacy.html' else '0.8')
     urls.append(f'  <url>\n    <loc>{loc}</loc>\n    <changefreq>monthly</changefreq>\n    <priority>{pri}</priority>\n  </url>')
-urls.append(f'  <url>\n    <loc>{DOMAIN}/events.html</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>')
+urls.append(f'  <url>\n    <loc>{DOMAIN}/events</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>')
 for e in events:
-    urls.append(f'  <url>\n    <loc>{DOMAIN}/events/{e["slug"]}.html</loc>\n    <changefreq>yearly</changefreq>\n    <priority>0.6</priority>\n  </url>')
+    urls.append(f'  <url>\n    <loc>{DOMAIN}/events/{e["slug"]}</loc>\n    <changefreq>yearly</changefreq>\n    <priority>0.6</priority>\n  </url>')
 open(os.path.join(OUT,'sitemap.xml'),'w',encoding='utf-8').write(
  '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
  + '\n'.join(urls) + '\n</urlset>\n')
