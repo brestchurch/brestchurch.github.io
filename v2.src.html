@@ -147,6 +147,14 @@ h4{
 .btns{display:flex;flex-wrap:wrap;gap:12px}
 .btns--center{justify-content:center}
 
+/* ссылка внутри текста: наследует кегль абзаца */
+.ilink{
+  color:inherit;
+  border-bottom:1px solid var(--label);
+  padding-bottom:1px;
+  transition:color .2s ease,border-color .2s ease;
+}
+.ilink:hover{color:var(--label);border-bottom-color:var(--label)}
 .tlink{
   display:inline-flex;align-items:center;gap:8px;
   font-weight:600;font-size:16px;
@@ -365,7 +373,15 @@ h4{
 .card-body{position:relative;z-index:2;max-width:52ch}
 .card h3{color:#fff;margin-bottom:.4em}
 .card p{color:rgba(255,255,255,.86);margin-bottom:1em}
-.card .tlink{color:#fff}
+.card /* ссылка внутри текста: наследует кегль абзаца */
+.ilink{
+  color:inherit;
+  border-bottom:1px solid var(--label);
+  padding-bottom:1px;
+  transition:color .2s ease,border-color .2s ease;
+}
+.ilink:hover{color:var(--label);border-bottom-color:var(--label)}
+.tlink{color:#fff}
 
 /* ---------- три факта ---------- */
 .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap)}
@@ -1318,7 +1334,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
   <section class="sec">
     <div class="wrap">
       <div class="sec-head narrow">
-        <p class="lead">Девять ориентиров, которые следуют из этого видения и определяют наши собрания, проповедь, служение и отношения друг с другом.</p>
+        <p class="lead">Девять ориентиров, которые следуют из нашего <a class="ilink" href="#/about">видения</a> и определяют наши собрания, проповедь, служение и отношения друг с другом.</p>
       </div>
       <div class="items items--two">
         <article class="item">
