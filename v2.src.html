@@ -376,7 +376,7 @@ h4{
 .card-body{position:relative;z-index:2;max-width:52ch}
 .card h3{color:#fff;margin-bottom:.4em}
 .card p{color:rgba(255,255,255,.86);margin-bottom:1em}
-/* .card /* ссылка внутри текста: наследует кегль абзаца */ */
+.card /* ссылка внутри текста: наследует кегль абзаца */
 .ilink{
   color:inherit;
   border-bottom:1px solid var(--label);
@@ -384,10 +384,7 @@ h4{
   transition:color .2s ease,border-color .2s ease;
 }
 .ilink:hover{color:var(--label);border-bottom-color:var(--label)}
-/* .tlink{color:#fff} */
-.card .ilink,
-.card .tlink{color:#fff} 
-   /* исправление */
+.tlink{color:#fff}
 
 /* ---------- три факта ---------- */
 .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap)}
@@ -952,13 +949,12 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
           <p class="q-name">Константин С.</p>
         </div>
 
-         <div class="q">
+        <div class="q">
           <img class="q-photo" loading="lazy" src="data:image/jpeg;base64,__P_MARINA__" alt="Марина Д.">
           <blockquote>Я присоединилась к церкви в 2025 году и нахожусь здесь совсем немного, но уже ощутила много заботы и любви, которой меня окружают. Мне нравится служить вместе с людьми, которые стали мне как семья и прославлять вместе великого Бога!</blockquote>
           <p class="q-name">Марина Д.</p>
         </div>
 
-         <!-- новое -->
 
         <div class="q">
           <img class="q-photo" loading="lazy" src="data:image/jpeg;base64,__P_KRISTINA__" alt="Кристина К.">

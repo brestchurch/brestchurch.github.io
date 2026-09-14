@@ -307,7 +307,6 @@ for route, fname, title, desc in PAGES:
                         ('__LOGO_BLACK__','assets/logo-black.png'),
                         ('__FAVICON__','assets/favicon.png'),
                         ('__P_SIMONCHIK__','assets/person-simonchik.jpg'),
-                        ('__P_MARINA__','assets/person-marina.jpg'),
                         ('__P_KONYUCHKO__','assets/person-konyuchko.jpg'),
                         ('__P_VEREMCHUK_D__','assets/person-veremchuk-d.jpg'),
                         ('__P_DEMIDOVICH__','assets/person-demidovich.jpg'),
@@ -316,7 +315,8 @@ for route, fname, title, desc in PAGES:
                         ('__P_IVAN_ASYA__','assets/person-ivan-asya.jpg'),
                         ('__P_NIKA__','assets/person-nika.jpg'),
                         ('__P_KRISTINA__','assets/person-kristina.jpg'),
-                        ('__P_IGOR__','assets/person-igor.jpg')]:
+                        ('__P_IGOR__','assets/person-igor.jpg'),
+                        ('__P_MARINA__','assets/person-marina.jpg')]:
         html = html.replace(f'src="data:image/png;base64,{token}"', f'src="/{path}"')
         html = html.replace(f'src="data:image/jpeg;base64,{token}"', f'src="/{path}"')
 
@@ -328,11 +328,11 @@ for route, fname, title, desc in PAGES:
 
 # ---------- картинки ----------
 os.makedirs(os.path.join(OUT, 'assets'), exist_ok=True)
-for f in ['logo-white.png','logo-black.png','favicon.png','apple-touch-icon.png','erip-qr.png','person-simonchik.jpg','person-marina.jpg',
+for f in ['logo-white.png','logo-black.png','favicon.png','apple-touch-icon.png','erip-qr.png','person-simonchik.jpg',
           'person-konyuchko.jpg','person-veremchuk-d.jpg','person-demidovich.jpg',
           'person-roy.jpg','person-veremchuk-dan.jpg',
           'person-ivan-asya.jpg','person-nika.jpg','person-kristina.jpg','person-igor.jpg',
-          'card-bible.jpg']:
+          'card-bible.jpg','person-marina.jpg']:
     shutil.copy(os.path.join('assets', f), os.path.join(OUT, 'assets', f))
 
 shutil.copy('favicon.ico', os.path.join(OUT, 'favicon.ico'))
