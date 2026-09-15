@@ -376,15 +376,7 @@ h4{
 .card-body{position:relative;z-index:2;max-width:52ch}
 .card h3{color:#fff;margin-bottom:.4em}
 .card p{color:rgba(255,255,255,.86);margin-bottom:1em}
-.card /* ссылка внутри текста: наследует кегль абзаца */
-.ilink{
-  color:inherit;
-  border-bottom:1px solid var(--label);
-  padding-bottom:1px;
-  transition:color .2s ease,border-color .2s ease;
-}
-.ilink:hover{color:var(--label);border-bottom-color:var(--label)}
-.tlink{color:#fff}
+.card .tlink{color:#fff}
 
 /* ---------- три факта ---------- */
 .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap)}
