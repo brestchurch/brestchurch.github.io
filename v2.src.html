@@ -558,6 +558,19 @@ span.person-mark{
 }
 
 /* ---------- страница события ---------- */
+/* шапка события с фотографией — примерно полэкрана, как на главной */
+.hero.hero--tall{
+  min-height:min(62vh,620px);
+  padding-top:calc(var(--header-h) + clamp(60px,8vw,110px));
+}
+@media (max-width:767px){
+  .hero.hero--tall{
+    min-height:420px;
+    padding-top:calc(var(--header-h) + 28px);
+    padding-bottom:34px;
+  }
+}
+
 /* заголовок события и кнопка регистрации в одной строке */
 .hero-row{display:flex;align-items:flex-end;justify-content:space-between;gap:clamp(20px,2.5vw,36px);flex-wrap:wrap}
 .hero-row > div:first-child{flex:0 1 auto;min-width:0}
