@@ -390,6 +390,80 @@ def shell(title, desc, canonical, body_html, schema=SCHEMA, extra_js=''):
         out = out.replace(f'src="data:image/png;base64,{token}"', f'src="/{path}"')
     return out
 
+
+# ---------- необязательные блоки страницы события ----------
+def _p(items, indent='      '):
+    return (chr(10)+indent).join(f'<p>{_html.escape(x)}</p>' for x in items)
+
+def sec_speakers(d):
+    cards = []
+    for p in d['items']:
+        ig = (f'<p style="margin-top:.6em"><a class="tlink" href="{p["instagram"]}" target="_blank" rel="noopener">Instagram</a></p>'
+              if p.get('instagram') else '')
+        bio = f'<p>{_html.escape(p["bio"])}</p>' if p.get('bio') else ''
+        cards.append(f'        <div class="person">'
+                     f'<span class="person-mark" aria-hidden="true">{_html.escape(p["initials"])}</span>'
+                     f'<div><h4>{_html.escape(p["name"])}</h4>'
+                     f'<p class="role">{_html.escape(p.get("church",""))}</p>{bio}{ig}</div></div>')
+    return (f'  <section class="sec"><div class="wrap">'
+            f'<div class="sec-head narrow"><span class="label">{_html.escape(d.get("label","Проповедники"))}</span>'
+            f'<h2>{_html.escape(d["title"])}</h2></div>'
+            f'<div class="people people--three">{chr(10)}{chr(10).join(cards)}{chr(10)}      </div>'
+            f'</div></section>')
+
+def sec_schedule(d):
+    rows = chr(10).join(f'        <div class="run"><div class="run-time">{_html.escape(r["time"])}</div>'
+                        f'<div class="run-what">{_html.escape(r["what"])}</div></div>' for r in d['items'])
+    note = f'<p class="form-note" style="margin-top:26px">{_html.escape(d["note"])}</p>' if d.get('note') else ''
+    return (f'  <section class="sec sec--stone"><div class="wrap narrow">'
+            f'<div class="sec-head"><span class="label">{_html.escape(d.get("label","Программа"))}</span>'
+            f'<h2>{_html.escape(d["title"])}</h2></div>'
+            f'<div class="runlist">{chr(10)}{rows}{chr(10)}      </div>{note}'
+            f'</div></section>')
+
+def sec_place(d):
+    links = ' '.join(f'<a class="btn btn--line" href="{l["url"]}" target="_blank" rel="noopener">{_html.escape(l["label"])}</a>'
+                     for l in d.get('links', []))
+    return (f'  <section class="sec"><div class="wrap"><div class="split"><div>'
+            f'<div class="sec-head" style="margin-bottom:20px"><span class="label">{_html.escape(d.get("label","Место"))}</span>'
+            f'<h2>{_html.escape(d["title"])}</h2></div>'
+            f'<p class="lead">{_html.escape(d["address"])}</p></div><div>{_p(d.get("text", []))}'
+            f'<div class="btns" style="margin-top:26px">{links}</div></div></div></div></section>')
+
+def sec_cards(d):
+    items = chr(10).join(f'        <article class="item">'
+                         f'<div class="value-head"><span class="label">{_html.escape(i.get("meta",""))}</span>'
+                         f'<h4>{_html.escape(i["name"])}</h4></div>'
+                         f'<p>{_html.escape(i["text"])}</p></article>' for i in d['items'])
+    note = f'<p class="form-note" style="margin-top:24px">{_html.escape(d["note"])}</p>' if d.get('note') else ''
+    return (f'  <section class="sec"><div class="wrap">'
+            f'<div class="sec-head narrow"><span class="label">{_html.escape(d.get("label",""))}</span>'
+            f'<h2>{_html.escape(d["title"])}</h2></div>'
+            f'<div class="items items--two">{chr(10)}{items}{chr(10)}      </div>{note}'
+            f'</div></section>')
+
+def sec_text(d):
+    tone = ' sec--stone' if d.get('tone') == 'stone' else ''
+    return (f'  <section class="sec{tone}"><div class="wrap narrow">'
+            f'<div class="sec-head"><span class="label">{_html.escape(d.get("label",""))}</span>'
+            f'<h2>{_html.escape(d["title"])}</h2></div>{_p(d["text"])}</div></section>')
+
+def sec_cta(d):
+    btn = (f'<a class="btn btn--fill-light" href="{d["button"]["url"]}" target="_blank" rel="noopener">'
+           f'{_html.escape(d["button"]["label"])}</a>') if d.get('button') else ''
+    paras = (chr(10)+'      ').join(f'<p class="lead">{_html.escape(x)}</p>' for x in d.get('text', []))
+    return (f'  <section class="sec sec--dark"><div class="wrap narrow center">'
+            f'<span class="label">{_html.escape(d.get("label",""))}</span>'
+            f'<h2>{_html.escape(d["title"])}</h2>{paras}'
+            f'<div class="btns btns--center" style="margin-top:clamp(26px,3vw,36px)">{btn}</div>'
+            f'</div></section>')
+
+SECTIONS = {'speakers': sec_speakers, 'schedule': sec_schedule, 'place': sec_place,
+            'cards': sec_cards, 'text': sec_text, 'cta': sec_cta}
+
+def render_sections(e):
+    return (chr(10)*2).join(SECTIONS[s['type']](s) for s in e.get('sections', []))
+
 data = json.load(open('events.json', encoding='utf-8'))
 today = _date.today().isoformat()
 
@@ -533,8 +607,15 @@ for e in events:
       <p class="lead">{_html.escape(e['summary'])}</p>
       {paras}
       {video}
-      <p class="article-back"><a class="tlink" href="/events">← Все события</a></p>
       </div>
+    </div>
+  </section>
+
+{render_sections(e)}
+
+  <section class="sec sec--tight">
+    <div class="wrap narrow">
+      <p><a class="tlink" href="/events">← Все события</a></p>
     </div>
   </section>"""
 

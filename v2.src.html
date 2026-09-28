@@ -474,7 +474,7 @@ h4{
 .people{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(28px,3vw,44px)}
 .people--three{grid-template-columns:repeat(3,1fr)}
 .person{
-  display:flex;align-items:center;gap:clamp(18px,2vw,26px);
+  display:flex;align-items:flex-start;gap:clamp(18px,2vw,26px);
   border-top:2px solid var(--ink);padding-top:24px;
 }
 .person-mark{
@@ -484,6 +484,13 @@ h4{
   display:block;object-fit:cover;object-position:center center;
   filter:grayscale(1);          /* страховка, если фото заменят на цветное */
   background:var(--stone);
+}
+/* кружок с инициалами вместо фотографии */
+span.person-mark{
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--display);font-weight:300;
+  font-size:clamp(18px,1.5vw,22px);letter-spacing:-.02em;
+  color:var(--label);
 }
 .person h4{margin:0 0 4px}
 .person .role{
@@ -507,6 +514,14 @@ h4{
 }
 .next h2{margin:0 0 .5em}
 .next-thumb{width:100%;max-width:520px;aspect-ratio:3/2;object-fit:cover;margin:0 0 20px;background:var(--stone)}
+
+/* ---------- программа мероприятия ---------- */
+.runlist{border-top:2px solid var(--ink)}
+.run{display:grid;grid-template-columns:120px 1fr;gap:clamp(18px,2.5vw,36px);
+     padding:clamp(16px,1.8vw,22px) 0;border-bottom:1px solid var(--line);align-items:baseline}
+.run-time{font-family:var(--sans);font-weight:700;font-size:17px;color:var(--label);font-variant-numeric:tabular-nums}
+.run-what{color:var(--text)}
+@media (max-width:560px){ .run{grid-template-columns:82px 1fr;gap:14px} }
 
 /* ---------- события ---------- */
 .events{display:grid;gap:0}
