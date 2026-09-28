@@ -549,7 +549,17 @@ span.person-mark{
 .events-empty{color:var(--muted)}
 
 /* ---------- страница события ---------- */
-.article{max-width:760px}
+/* ---------- страница события ---------- */
+/* страница события — одна узкая колонка по центру, чтобы блоки не разъезжались */
+.event-page .wrap,
+.event-page .narrow{max-width:860px}
+.event-page .article{max-width:100%}
+.event-page .sec{padding-block:clamp(44px,4.5vw,80px)}
+.event-page .hero h1{max-width:18ch}
+.event-page .people--three{gap:clamp(18px,2.4vw,32px)}
+@media (max-width:767px){
+  .event-page .sec{padding-block:clamp(34px,7vw,50px)}
+}
 .article .lead{margin-bottom:1.2em}
 .article p{margin-bottom:1.1em}
 .article-media{width:100%;margin:0 0 clamp(26px,3vw,40px);background:var(--stone)}
