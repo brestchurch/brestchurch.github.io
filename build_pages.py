@@ -467,7 +467,9 @@ SECTIONS = {'speakers': sec_speakers, 'schedule': sec_schedule, 'place': sec_pla
             'cards': sec_cards, 'text': sec_text, 'cta': sec_cta}
 
 def render_sections(e):
-    return (chr(10)*2).join(SECTIONS[s['type']](s) for s in e.get('sections', []))
+    out = (chr(10)*2).join(SECTIONS[s['type']](s) for s in e.get('sections', []))
+    # один адрес регистрации на всю страницу
+    return out.replace('REGISTRATION_URL', e.get('registration_url', '#'))
 
 data = json.load(open('events.json', encoding='utf-8'))
 today = _date.today().isoformat()
@@ -601,10 +603,19 @@ for e in events:
     hero_style = (f' style="background-image:url(\'{media_src(e["hero"])}\');'
                   f'background-position:{e.get("hero_pos","center 45%")}"') if e.get('hero') else ''
     hero_cls  = 'hero hero--page' + ('' if e.get('hero') else ' hero--flat')
+    reg = e.get('registration_url')
+    hero_btn = (f'<div class="hero-action"><a class="btn btn--fill-light" href="{reg}" '
+                f'target="_blank" rel="noopener">{_html.escape(e.get("registration_label","Зарегистрироваться"))}</a></div>'
+                ) if reg else ''
     body = f"""  <section class="{hero_cls}"{hero_style}>
     <div class="wrap">
-      <span class="label" style="color:var(--accent)">{_html.escape(e.get('kind',''))} · {ru_date(e['date'])}</span>
-      <h1>{_html.escape(e['title'])}</h1>
+      <div class="hero-row">
+        <div>
+          <span class="label" style="color:var(--accent)">{_html.escape(e.get('kind',''))} · {ru_date(e['date'])}</span>
+          <h1>{_html.escape(e['title'])}</h1>
+        </div>
+        {hero_btn}
+      </div>
     </div>
   </section>
 

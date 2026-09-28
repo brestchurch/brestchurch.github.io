@@ -123,12 +123,14 @@
           ],
           "button": {
             "label": "Зарегистрироваться",
-            "url": "REPLACE_ME"
+            "url": "REGISTRATION_URL"
           }
         }
       ],
       "hero": "conf-reformation.jpg",
-      "hero_pos": "center 38%"
+      "hero_pos": "center 38%",
+      "registration_url": "https://forms.gle/ЗАМЕНИТЕ-НА-ССЫЛКУ-ФОРМЫ",
+      "registration_label": "Зарегистрироваться"
     },
     {
       "slug": "reformaciya-2026",
