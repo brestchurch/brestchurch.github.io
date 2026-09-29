@@ -130,9 +130,7 @@
       "hero": "conf-reformation.jpg",
       "hero_pos": "center 38%",
       "registration_url": "https://forms.gle/xqoEGQXk8gTfPmwR9",
-      "registration_label": "Зарегистрироваться",
-      "logo": "ad-fontes-white.svg",
-      "logo_alt": "Ad Fontes"
+      "registration_label": "Зарегистрироваться"
     },
     {
       "slug": "reformaciya-2026",
