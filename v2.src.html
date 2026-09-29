@@ -2024,6 +2024,11 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
     }
 
     f.addEventListener('submit', function(e){
+// 🛑 ЕСЛИ ЭТО ФОРМА КОНФЕРЕНЦИИ (есть поле обеда) — ПРОПУСКАЕМ FormSubmit!
+      if (f.querySelector('[name="lunch"]') || f.querySelector('#lunch') || f.querySelector('[name="Нужен обед"]')) {
+        return;
+      }
+       
       e.preventDefault();
 
       if (f.querySelector('[name=_honey]').value) return;   /* ловушка для ботов */
@@ -2064,61 +2069,58 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
     });
   });
 
-   /* ---- отправка формы регистрации на конференцию (Google Таблицы) ---- */
-  (function() {
-    // Вставьте сюда вашу ссылку из Google Apps Script
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx4drB36dLPeBsTRo5ePVsqoGHwu0F9-0IURNODmMFW-ATFhEumoQodTjDzU18P9iHPMQ/exec';
+/* ---- регистрация на конференцию (ТОЛЬКО Google Таблицы) ---- */
+  var GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx4drB36dLPeBsTRo5ePVsqoGHwu0F9-0IURNODmMFW-ATFhEumoQodTjDzU18P9iHPMQ/exec';
 
-    document.addEventListener('submit', async function(e) {
-      const form = e.target;
-      
-      // Находим поле обеда, чтобы понять, что отправляется ИМЕННО форма конференции
-      const lunchInput = form.querySelector('[name="lunch"]') || form.querySelector('[name="Нужен обед"]') || form.querySelector('#lunch');
-      
-      // Если это обычная форма обращения с сайта — ничего не делаем, её обработает FormSubmit
-      if (!lunchInput) return;
+  [].slice.call(document.querySelectorAll('.js-form')).forEach(function(f){
+    // Ищем поле обеда, чтобы определить, что это именно форма конференции
+    var lunchInput = f.querySelector('[name="lunch"]') || f.querySelector('#lunch') || f.querySelector('[name="Нужен обед"]');
+    if (!lunchInput) return; // Если поля обеда нет — пропускаем (это обычная форма)
 
-      e.preventDefault(); // Перехватываем отправку только для конференции
+    f.addEventListener('submit', function(e){
+      e.preventDefault();
+      e.stopPropagation(); // Блокируем отправку на любые другие сервисы
 
-      const btn = form.querySelector('button[type="submit"]');
-      const originalText = btn ? btn.textContent : '';
-
-      const payload = {
-        firstName: form.querySelector('[name="name"]')?.value || form.querySelector('[name="Имя"]')?.value || '',
-        lastName: form.querySelector('[name="surname"]')?.value || form.querySelector('[name="Фамилия"]')?.value || '',
-        phone: form.querySelector('[name="phone"]')?.value || form.querySelector('[name="Телефон"]')?.value || '',
-        telegram: form.querySelector('[name="tg"]')?.value || form.querySelector('[name="Телеграм"]')?.value || '',
-        church: form.querySelector('[name="church"]')?.value || form.querySelector('[name="Церковь"]')?.value || '',
-        city: form.querySelector('[name="city"]')?.value || form.querySelector('[name="Город"]')?.value || '',
-        needsLunch: lunchInput.checked
-      };
+      var btn = f.querySelector('button[type=submit]');
+      var label = btn ? btn.textContent : '';
 
       if (btn) {
         btn.disabled = true;
         btn.textContent = 'Отправка…';
       }
 
-      try {
-        await fetch(GOOGLE_SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
+      var payload = {
+        firstName: f.querySelector('[name="name"]')?.value || f.querySelector('[name="Имя"]')?.value || '',
+        lastName: f.querySelector('[name="surname"]')?.value || f.querySelector('[name="Фамилия"]')?.value || '',
+        phone: f.querySelector('[name="phone"]')?.value || f.querySelector('[name="Телефон"]')?.value || '',
+        telegram: f.querySelector('[name="tg"]')?.value || f.querySelector('[name="Телеграм"]')?.value || '',
+        church: f.querySelector('[name="church"]')?.value || f.querySelector('[name="Церковь"]')?.value || '',
+        city: f.querySelector('[name="city"]')?.value || f.querySelector('[name="Город"]')?.value || '',
+        needsLunch: lunchInput.checked
+      };
 
-        alert('Спасибо! Ваша заявка на конференцию успешно отправлена.');
-        form.reset();
-      } catch (err) {
-        console.error('Ошибка отправки:', err);
-        alert('Не удалось отправить форму. Попробуйте ещё раз.');
-      } finally {
+      fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(function(){
+        alert('Спасибо! Ваша заявка на конференцию успешно принята.');
+        f.reset();
+      })
+      .catch(function(err){
+        console.error('Ошибка:', err);
+        alert('Произошла ошибка при отправке. Попробуйте еще раз.');
+      })
+      .finally(function(){
         if (btn) {
           btn.disabled = false;
-          btn.textContent = originalText;
+          btn.textContent = label;
         }
-      }
-    }, true);
-  })();
+      });
+    });
+  });
 
   /* оглавление исповедания: переход к пункту и подсветка текущего */
   var tocLinks = [].slice.call(document.querySelectorAll('.toc-link'));
