@@ -915,7 +915,15 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
   cursor: pointer !important;
 }
 
-
+/* ============================================================
+   Блюр и блокировка всех секций после блока "Спикеры"
+   ============================================================ */
+.event-page section:has(.people) ~ section {
+  filter: blur(8px) !important;
+  pointer-events: none !important;
+  user-select: none !important;
+  opacity: 0.6 !important;
+}
    
 </style>
 </head>
