@@ -2070,7 +2070,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
   var MAIL_TO = 'biblechurch.by@gmail.com';
   var MAIL_ENDPOINT = 'https://formsubmit.co/ajax/' + MAIL_TO;
   
-  // ⚠️ ВСТАВЬТЕ СЮДА ВАШУ ССЫЛКУ ИЗ GOOGLE APPS SCRIPT
+  // ВСТАВЬТЕ СЮДА ВАШУ ССЫЛКУ ИЗ GOOGLE APPS SCRIPT
   var GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx4drB36dLPeBsTRo5ePVsqoGHwu0F9-0IURNODmMFW-ATFhEumoQodTjDzU18P9iHPMQ/exec';
 
   [].slice.call(document.querySelectorAll('.js-form')).forEach(function(f){
@@ -2078,33 +2078,22 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
     var btn    = f.querySelector('button[type=submit]');
     var label  = btn ? btn.textContent : '';
 
-    function say(text, state){
-      if (!status) return;
-      status.textContent = text;
-      status.setAttribute('data-state', state);
-      status.hidden = false;
-    }
-
     f.addEventListener('submit', function(e){
       e.preventDefault();
 
-      // Определяем, является ли форма формой регистрации на конференцию
-      var isConference = f.querySelector('#lunch') || 
-                         f.querySelector('[name="lunch"]') || 
-                         f.querySelector('[name="Нужен обед"]') ||
-                         f.innerHTML.indexOf('Ad Fontes') !== -1;
+      // Находим элемент обеда с учетом ID reg-lunch из сборщика
+      var lunchEl = f.querySelector('#reg-lunch') || 
+                    f.querySelector('#lunch') || 
+                    f.querySelector('[name="lunch"]') || 
+                    f.querySelector('[name="Нужен обед"]');
+
+      var isConference = !!lunchEl || f.innerHTML.indexOf('Ad Fontes') !== -1;
 
       // ----------------------------------------------------
-      // ВАРИАНТ А: ФОРМА КОНФЕРЕНЦИИ -> ОТПРАВЛЯЕМ В GOOGLE
+      // ОТПРАВКА В GOOGLE ТАБЛИЦУ (для конференции)
       // ----------------------------------------------------
       if (isConference) {
         if (btn) { btn.disabled = true; btn.textContent = 'Отправка…'; }
-
-        var lunchEl = f.querySelector('#reg-lunch') || f.querySelector('#lunch') || f.querySelector('[name="lunch"]') || f.querySelector('[name="Нужен обед"]');
-        var needsLunchValue = false;
-        if (lunchEl) {
-          needsLunchValue = lunchEl.type === 'checkbox' ? lunchEl.checked : (lunchEl.value.trim().toLowerCase() === 'да' || lunchEl.value.trim() !== '');
-        }
 
         var payload = {
           firstName: f.querySelector('[name="name"]')?.value || f.querySelector('[name="Имя"]')?.value || '',
@@ -2113,7 +2102,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
           telegram: f.querySelector('[name="tg"]')?.value || f.querySelector('[name="Телеграм"]')?.value || '',
           church: f.querySelector('[name="church"]')?.value || f.querySelector('[name="Церковь"]')?.value || '',
           city: f.querySelector('[name="city"]')?.value || f.querySelector('[name="Город"]')?.value || '',
-          needsLunch: needsLunchValue
+          needsLunch: lunchEl ? lunchEl.checked : false
         };
 
         fetch(GOOGLE_SCRIPT_URL, {
@@ -2134,20 +2123,13 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
           if (btn) { btn.disabled = false; btn.textContent = label; }
         });
 
-        return; // Завершаем выполнение, чтобы FormSubmit НЕ вызывался
+        return; // Отменяем вызов FormSubmit
       }
 
       // ----------------------------------------------------
-      // ВАРИАНТ Б: ОБЫЧНАЯ ФОРМА САЙТА -> ОТПРАВЛЯЕМ НА FORMSUBMIT
+      // ОТПРАВКА НА FORMSUBMIT (для обычных форм)
       // ----------------------------------------------------
       if (f.querySelector('[name=_honey]') && f.querySelector('[name=_honey]').value) return;
-
-      if (!f.checkValidity()){
-        say('Заполните имя, контакт и текст сообщения.', 'err');
-        var bad = f.querySelector(':invalid');
-        if (bad) bad.focus();
-        return;
-      }
 
       var data = {};
       new FormData(f).forEach(function(v, k){ if (k !== '_honey') data[k] = v; });
@@ -2155,7 +2137,6 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
       data._template = 'table';
 
       if (btn) { btn.disabled = true; btn.textContent = 'Отправляем…'; }
-      if (status) status.hidden = true;
 
       fetch(MAIL_ENDPOINT, {
         method: 'POST',
@@ -2165,10 +2146,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
       .then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function(){
         f.reset();
-        say('Спасибо, сообщение отправлено. Мы ответим на указанный вами контакт.', 'ok');
-      })
-      .catch(function(){
-        say('Не удалось отправить. Напишите, пожалуйста, напрямую на ' + MAIL_TO, 'err');
+        alert('Сообщение отправлено!');
       })
       .finally(function(){
         if (btn) { btn.disabled = false; btn.textContent = label; }
