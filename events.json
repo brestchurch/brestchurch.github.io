@@ -105,12 +105,8 @@
           ],
           "links": [
             {
-              "label": "Маршрут от автовокзала",
+              "label": "Маршрут от ж/д, автовокзала",
               "url": "https://www.google.com/maps/dir/?api=1&origin=Brest+Central+Bus+Station&destination=Брест,+ул.+Наганова+10&travelmode=walking"
-            },
-            {
-              "label": "Маршрут от ж/д вокзала",
-              "url": "https://www.google.com/maps/dir/?api=1&origin=Brest+Railway+Station&destination=Брест,+ул.+Наганова+10&travelmode=walking"
             }
           ]
         },
@@ -119,7 +115,7 @@
           "label": "Участие",
           "title": "Добровольный взнос — 20 рублей",
           "text": [
-            "Взнос покрывает аренду, кофе и материалы. Оплатить можно на месте."
+            "Оплатить можно на месте в BYN."
           ],
           "button": {
             "label": "Зарегистрироваться",
