@@ -115,22 +115,76 @@
           ]
         },
         {
+          "type": "form",
+          "label": "Регистрация",
+          "title": "Зарегистрироваться на Ad Fontes",
+          "subject": "Регистрация на Ad Fontes 2026",
+          "text": [
+            "Заполните форму, чтобы мы подготовили место и материалы. Регистрация занимает минуту."
+          ],
+          "fields": [
+            {
+              "id": "name",
+              "name": "Имя",
+              "label": "Имя",
+              "autocomplete": "given-name",
+              "placeholder": "Имя"
+            },
+            {
+              "id": "surname",
+              "name": "Фамилия",
+              "label": "Фамилия",
+              "autocomplete": "family-name",
+              "placeholder": "Фамилия"
+            },
+            {
+              "id": "phone",
+              "name": "Телефон",
+              "label": "Номер телефона",
+              "type": "tel",
+              "prefix": "+375",
+              "autocomplete": "tel",
+              "placeholder": "29 123 45 67"
+            },
+            {
+              "id": "tg",
+              "name": "Телеграм",
+              "label": "Никнейм в Телеграм",
+              "prefix": "@",
+              "placeholder": "username",
+              "required": false
+            },
+            {
+              "id": "church",
+              "name": "Церковь и город",
+              "label": "Церковь и город",
+              "placeholder": "Например: Библейская церковь, Брест",
+              "required": false
+            }
+          ],
+          "consent": "Согласен на обработку персональных данных",
+          "button": "Зарегистрироваться",
+          "note": "Данные нужны только для подготовки конференции. Мы не публикуем их и не передаём третьим лицам."
+        },
+        {
           "type": "cta",
           "label": "Участие",
           "title": "Добровольный взнос — 20 рублей",
           "text": [
-            "Заполните короткую форму, чтобы мы могли подготовить места и материалы."
+            "Взнос покрывает аренду, кофе и материалы. Оплатить можно на месте."
           ],
           "button": {
             "label": "Зарегистрироваться",
-            "url": "REGISTRATION_URL"
+            "url": "#register"
           }
         }
       ],
       "hero": "conf-reformation.jpg",
       "hero_pos": "center 38%",
-      "registration_url": "https://forms.gle/ЗАМЕНИТЕ-НА-ССЫЛКУ-ФОРМЫ",
-      "registration_label": "Зарегистрироваться"
+      "registration_url": "#register",
+      "registration_label": "Зарегистрироваться",
+      "logo": "ad-fontes-white.svg",
+      "logo_alt": "Ad Fontes"
     },
     {
       "slug": "reformaciya-2026",

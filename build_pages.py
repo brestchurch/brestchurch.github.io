@@ -332,7 +332,8 @@ for f in ['logo-white.png','logo-black.png','favicon.png','apple-touch-icon.png'
           'person-konyuchko.jpg','person-veremchuk-d.jpg','person-demidovich.jpg',
           'person-roy.jpg','person-veremchuk-dan.jpg',
           'person-ivan-asya.jpg','person-nika.jpg','person-kristina.jpg','person-igor.jpg',
-          'card-bible.jpg','person-marina.jpg','conf-reformation.jpg']:
+          'card-bible.jpg','person-marina.jpg','conf-reformation.jpg',
+          'ad-fontes-white.svg','ad-fontes-black.svg']:
     shutil.copy(os.path.join('assets', f), os.path.join(OUT, 'assets', f))
 
 shutil.copy('favicon.ico', os.path.join(OUT, 'favicon.ico'))
@@ -396,6 +397,10 @@ def _p(items, indent='      '):
     return (chr(10)+indent).join(f'<p>{_html.escape(x)}</p>' for x in items)
 
 
+
+def _ext(url):
+    return ' target="_blank" rel="noopener"' if str(url).startswith('http') else ''
+
 def _label(d, default=''):
     t = d.get('label', default)
     return f'<span class="label">{_html.escape(t)}</span>' if t else ''
@@ -454,7 +459,7 @@ def sec_text(d):
             f'<h2>{_html.escape(d["title"])}</h2></div>{_p(d["text"])}</div></section>')
 
 def sec_cta(d):
-    btn = (f'<a class="btn btn--fill-light" href="{d["button"]["url"]}" target="_blank" rel="noopener">'
+    btn = (f'<a class="btn btn--fill-light" href="{d["button"]["url"]}"{_ext(d["button"]["url"])}>'
            f'{_html.escape(d["button"]["label"])}</a>') if d.get('button') else ''
     paras = (chr(10)+'      ').join(f'<p class="lead">{_html.escape(x)}</p>' for x in d.get('text', []))
     return (f'  <section class="sec sec--dark"><div class="wrap narrow center">'
@@ -463,8 +468,37 @@ def sec_cta(d):
             f'<div class="btns btns--center" style="margin-top:clamp(26px,3vw,36px)">{btn}</div>'
             f'</div></section>')
 
+
+def sec_form(d):
+    fields = []
+    for f in d['fields']:
+        req = ' required' if f.get('required', True) else ''
+        pre = f'<span class="field-prefix">{_html.escape(f["prefix"])}</span>' if f.get('prefix') else ''
+        cls = ' field--prefixed' if f.get('prefix') else ''
+        fields.append(
+            f'<div class="field{cls}"><label for="reg-{f["id"]}">{_html.escape(f["label"])}</label>'
+            f'<div class="field-input">{pre}'
+            f'<input id="reg-{f["id"]}" name="{_html.escape(f["name"])}" type="{f.get("type","text")}"'
+            f'{req} autocomplete="{f.get("autocomplete","off")}" placeholder="{_html.escape(f.get("placeholder",""))}">'
+            f'</div></div>')
+    rows = ''.join(fields)
+    return (f'  <section class="sec sec--stone" id="register"><div class="wrap narrow">'
+            f'<div class="sec-head">{_label(d)}<h2>{_html.escape(d["title"])}</h2></div>'
+            f'{_p(d.get("text", []))}'
+            f'<form class="form js-form reg-form" novalidate>'
+            f'<input type="hidden" name="_subject" value="{_html.escape(d.get("subject","Регистрация на конференцию"))}">'
+            f'<div class="hp"><label>Не заполняйте это поле'
+            f'<input type="text" name="_honey" tabindex="-1" autocomplete="off"></label></div>'
+            f'<div class="form-grid">{rows}</div>'
+            f'<label class="consent"><input type="checkbox" name="Согласие" value="да" required>'
+            f'<span>{_html.escape(d.get("consent","Согласен на обработку персональных данных"))}</span></label>'
+            f'<button class="btn btn--fill" type="submit">{_html.escape(d.get("button","Зарегистрироваться"))}</button>'
+            f'<p class="form-status" role="status" aria-live="polite" hidden></p>'
+            f'<p class="form-note">{_html.escape(d.get("note",""))}</p>'
+            f'</form></div></section>')
+
 SECTIONS = {'speakers': sec_speakers, 'schedule': sec_schedule, 'place': sec_place,
-            'cards': sec_cards, 'text': sec_text, 'cta': sec_cta}
+            'cards': sec_cards, 'text': sec_text, 'cta': sec_cta, 'form': sec_form}
 
 def render_sections(e):
     out = (chr(10)*2).join(SECTIONS[s['type']](s) for s in e.get('sections', []))
@@ -602,17 +636,20 @@ for e in events:
 
     hero_style = (f' style="background-image:url(\'{media_src(e["hero"])}\');'
                   f'background-position:{e.get("hero_pos","center 45%")}"') if e.get('hero') else ''
-    hero_cls  = 'hero hero--page' + ('' if e.get('hero') else ' hero--flat')
+    hero_cls  = 'hero hero--page' + (' hero--tall' if e.get('hero') else ' hero--flat')
+    logo_img  = (f'<img class="event-logo" src="/assets/{e["logo"]}" alt="{_html.escape(e.get("logo_alt",""))}">'
+                 if e.get('logo') else '')
+    title_cls = ' class="h1--sub"' if e.get('logo') else ''
     reg = e.get('registration_url')
-    hero_btn = (f'<div class="hero-action"><a class="btn btn--fill-light" href="{reg}" '
-                f'target="_blank" rel="noopener">{_html.escape(e.get("registration_label","Зарегистрироваться"))}</a></div>'
-                ) if reg else ''
+    hero_btn = (f'<div class="hero-action"><a class="btn btn--fill-light" href="{reg}"{_ext(reg)}>'
+                f'{_html.escape(e.get("registration_label","Зарегистрироваться"))}</a></div>') if reg else ''
     body = f"""  <section class="{hero_cls}"{hero_style}>
     <div class="wrap">
       <div class="hero-row">
         <div>
           <span class="label" style="color:var(--accent)">{_html.escape(e.get('kind',''))} · {ru_date(e['date'])}</span>
-          <h1>{_html.escape(e['title'])}</h1>
+          {logo_img}
+          <h1{title_cls}>{_html.escape(e['title'])}</h1>
         </div>
         {hero_btn}
       </div>

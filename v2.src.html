@@ -550,7 +550,7 @@ span.person-mark{
 
 /* заголовок события и кнопка регистрации в одной строке */
 .hero-row{display:flex;align-items:flex-end;justify-content:space-between;gap:clamp(20px,2.5vw,36px);flex-wrap:wrap}
-.hero-row > div:first-child{flex:0 1 auto;min-width:0}
+.hero-row > div:first-child{flex:0 1 auto;min-width:min(430px,100%)}
 .hero-action{flex:0 0 auto;padding-bottom:clamp(6px,1vw,14px)}
 @media (max-width:767px){
   .hero-row{flex-direction:column;align-items:stretch;gap:22px}
@@ -558,6 +558,40 @@ span.person-mark{
 }
 
 /* ---------- страница события ---------- */
+/* логотип конференции в шапке события */
+.event-logo{
+  display:block;width:auto;
+  height:clamp(72px,8.5vw,138px);
+  margin:clamp(14px,1.8vw,22px) 0 clamp(12px,1.4vw,18px);
+}
+.hero h1.h1--sub{
+  font-family:var(--sans);font-weight:500;
+  font-size:clamp(17px,1.1vw + 12px,24px);
+  letter-spacing:0;line-height:1.35;
+  max-width:26ch;margin:0;color:var(--on-dark);
+}
+
+#register{scroll-margin-top:calc(var(--header-h) + 16px)}
+
+/* форма регистрации */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}
+.field-input{display:flex;align-items:stretch}
+.field-prefix{
+  display:flex;align-items:center;padding:0 12px;
+  font-family:var(--sans);font-size:17px;color:var(--muted);
+  background:#fff;border:1px solid rgba(20,18,15,.28);border-right:0;
+}
+.field--prefixed input{border-left:0}
+.field-input input{flex:1 1 auto;min-width:0}
+.consent{
+  display:flex;align-items:flex-start;gap:12px;
+  margin:6px 0 24px;font-size:16px;color:var(--text);cursor:pointer;
+}
+.consent input{width:22px;height:22px;flex:0 0 auto;margin-top:2px;accent-color:var(--ink)}
+@media (max-width:640px){
+  .form-grid{grid-template-columns:1fr}
+}
+
 /* шапка события с фотографией — примерно полэкрана, как на главной */
 .hero.hero--tall{
   min-height:min(62vh,620px);
@@ -573,7 +607,7 @@ span.person-mark{
 
 /* заголовок события и кнопка регистрации в одной строке */
 .hero-row{display:flex;align-items:flex-end;justify-content:space-between;gap:clamp(20px,2.5vw,36px);flex-wrap:wrap}
-.hero-row > div:first-child{flex:0 1 auto;min-width:0}
+.hero-row > div:first-child{flex:0 1 auto;min-width:min(430px,100%)}
 .hero-action{flex:0 0 auto;padding-bottom:clamp(6px,1vw,14px)}
 @media (max-width:767px){
   .hero-row{flex-direction:column;align-items:stretch;gap:22px}
