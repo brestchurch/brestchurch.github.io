@@ -161,12 +161,37 @@ h4{
   border-bottom:1px solid currentColor;padding-bottom:2px;
 }
 .tlink:hover{opacity:.7}
+   
 .field input[type="checkbox"] {
+  -webkit-appearance: checkbox !important;
+  appearance: checkbox !important;
   width: 22px !important;
   height: 22px !important;
   padding: 0 !important;
-  cursor: pointer;
+  margin: 0 !important;
   accent-color: var(--ink);
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+/* Выравнивание чекбокса и текста в одну строку, как у блока согласия (.consent) */
+.field:has(input[type="checkbox"]) {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0 24px;
+}
+
+.field:has(input[type="checkbox"]) label {
+  margin-bottom: 0;
+  font-size: 16px;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--text);
+  cursor: pointer;
 }
 
 /* ---------- шапка ---------- */
