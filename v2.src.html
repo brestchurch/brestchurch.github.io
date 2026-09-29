@@ -916,13 +916,14 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
 }
 
 /* ============================================================
-   Блюр и блокировка всех секций после блока "Спикеры"
+   Блюр и блокировка блока "Спикеры" и всех секций после него
    ============================================================ */
+.event-page section:has(.people),
 .event-page section:has(.people) ~ section {
   filter: blur(8px) !important;
   pointer-events: none !important;
   user-select: none !important;
-  opacity: 0.6 !important;
+  opacity: 0.5 !important;
 }
    
 </style>
