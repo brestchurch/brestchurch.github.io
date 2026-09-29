@@ -555,10 +555,18 @@ def sec_form(d):
 SECTIONS = {'speakers': sec_speakers, 'schedule': sec_schedule, 'place': sec_place,
             'cards': sec_cards, 'text': sec_text, 'cta': sec_cta, 'form': sec_form}
 
+def _subst(obj, url):
+    """Подставляет адрес регистрации ДО сборки разметки — иначе проверка
+    на внешнюю ссылку видит служебное слово, а не адрес."""
+    if isinstance(obj, dict):  return {k: _subst(v, url) for k, v in obj.items()}
+    if isinstance(obj, list):  return [_subst(v, url) for v in obj]
+    if isinstance(obj, str):   return obj.replace('REGISTRATION_URL', url)
+    return obj
+
 def render_sections(e):
-    out = (chr(10)*2).join(SECTIONS[s['type']](s) for s in e.get('sections', []))
-    # один адрес регистрации на всю страницу
-    return out.replace('REGISTRATION_URL', e.get('registration_url', '#'))
+    url = e.get('registration_url', '#')
+    secs = _subst(e.get('sections', []), url)
+    return (chr(10)*2).join(SECTIONS[s['type']](s) for s in secs)
 
 data = json.load(open('events.json', encoding='utf-8'))
 today = _date.today().isoformat()
