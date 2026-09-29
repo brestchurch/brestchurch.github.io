@@ -161,61 +161,6 @@ h4{
   border-bottom:1px solid currentColor;padding-bottom:2px;
 }
 .tlink:hover{opacity:.7}
-   
-/* ============================================================
-   Стилизация чекбокса "Нужен ли вам обед?" (#reg-lunch)
-   ============================================================ */
-
-/* 1. Убираем белую рамку и фон с обертки .field-input */
-.field-input:has(#reg-lunch),
-.field:has(#reg-lunch) .field-input {
-  display: inline-flex !important;
-  border: none !important;
-  background: transparent !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  width: auto !important;
-  box-shadow: none !important;
-}
-
-/* 2. Восстанавливаем внешний вид и размер галочки */
-#reg-lunch {
-  -webkit-appearance: checkbox !important;
-  appearance: checkbox !important;
-  width: 22px !important;
-  height: 22px !important;
-  min-width: 22px !important;
-  max-width: 22px !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  border: none !important;
-  background: transparent !important;
-  accent-color: var(--ink) !important;
-  cursor: pointer !important;
-  box-shadow: none !important;
-}
-
-/* 3. Ставим галочку слева, а текст справа (в одну строку) */
-.field:has(#reg-lunch) {
-  display: flex !important;
-  flex-direction: row-reverse !important; /* переставляет label после чекбокса */
-  justify-content: flex-end !important;
-  align-items: center !important;
-  gap: 12px !important;
-  margin: 20px 0 !important;
-}
-
-/* 4. Оформляем текст "Нужен ли вам обед?" так же, как текст согласия */
-.field:has(#reg-lunch) label {
-  margin-bottom: 0 !important;
-  font-family: var(--sans) !important;
-  font-size: 16px !important;
-  font-weight: 400 !important;
-  text-transform: none !important;
-  letter-spacing: normal !important;
-  color: var(--text) !important;
-  cursor: pointer !important;
-}
 
 /* ---------- шапка ---------- */
 .header{
@@ -911,6 +856,67 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
 @media (prefers-reduced-motion:reduce){
   *{transition:none!important;animation:none!important;scroll-behavior:auto!important}
 }
+
+/* ============================================================
+   Стилизация чекбокса "Нужен ли вам обед?"
+   ============================================================ */
+
+/* 1. Сбрасываем прямоугольную рамку и фон с обертки */
+.field .field-input:has(input[type="checkbox"]),
+.field-input:has(#reg-lunch) {
+  display: inline-flex !important;
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: auto !important;
+  box-shadow: none !important;
+}
+
+/* 2. Восстанавливаем внешний вид галочки */
+.field input[type="checkbox"],
+#reg-lunch {
+  -webkit-appearance: checkbox !important;
+  appearance: checkbox !important;
+  width: 22px !important;
+  height: 22px !important;
+  min-width: 22px !important;
+  max-width: 22px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  accent-color: var(--ink) !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+}
+
+/* 3. Выравниваем галочку слева, а текст справа в одну строку */
+.field:has(input[type="checkbox"]),
+.field:has(#reg-lunch) {
+  display: flex !important;
+  flex-direction: row-reverse !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 12px !important;
+  margin: 18px 0 24px !important;
+}
+
+/* 4. Оформляем текст подписи */
+.field:has(input[type="checkbox"]) label,
+.field:has(#reg-lunch) label {
+  margin-bottom: 0 !important;
+  font-family: var(--sans) !important;
+  font-size: 16px !important;
+  font-weight: 400 !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  color: var(--text) !important;
+  cursor: pointer !important;
+}
+
+
+   
 </style>
 </head>
 <body>
@@ -2094,7 +2100,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
       if (isConference) {
         if (btn) { btn.disabled = true; btn.textContent = 'Отправка…'; }
 
-        var lunchEl = f.querySelector('#lunch') || f.querySelector('[name="lunch"]') || f.querySelector('[name="Нужен обед"]');
+        var lunchEl = f.querySelector('#reg-lunch') || f.querySelector('#lunch') || f.querySelector('[name="lunch"]') || f.querySelector('[name="Нужен обед"]');
         var needsLunchValue = false;
         if (lunchEl) {
           needsLunchValue = lunchEl.type === 'checkbox' ? lunchEl.checked : (lunchEl.value.trim().toLowerCase() === 'да' || lunchEl.value.trim() !== '');
