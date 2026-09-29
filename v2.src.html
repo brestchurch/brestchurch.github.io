@@ -2064,6 +2064,61 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
     });
   });
 
+   /* ---- отправка формы регистрации на конференцию (Google Таблицы) ---- */
+  (function() {
+    // Вставьте сюда вашу ссылку из Google Apps Script
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/ВАШ_ИДЕНТИФИКАТОР_СКРИПТА/exec';
+
+    document.addEventListener('submit', async function(e) {
+      const form = e.target;
+      
+      // Находим поле обеда, чтобы понять, что отправляется ИМЕННО форма конференции
+      const lunchInput = form.querySelector('[name="lunch"]') || form.querySelector('[name="Нужен обед"]') || form.querySelector('#lunch');
+      
+      // Если это обычная форма обращения с сайта — ничего не делаем, её обработает FormSubmit
+      if (!lunchInput) return;
+
+      e.preventDefault(); // Перехватываем отправку только для конференции
+
+      const btn = form.querySelector('button[type="submit"]');
+      const originalText = btn ? btn.textContent : '';
+
+      const payload = {
+        firstName: form.querySelector('[name="name"]')?.value || form.querySelector('[name="Имя"]')?.value || '',
+        lastName: form.querySelector('[name="surname"]')?.value || form.querySelector('[name="Фамилия"]')?.value || '',
+        phone: form.querySelector('[name="phone"]')?.value || form.querySelector('[name="Телефон"]')?.value || '',
+        telegram: form.querySelector('[name="tg"]')?.value || form.querySelector('[name="Телеграм"]')?.value || '',
+        church: form.querySelector('[name="church"]')?.value || form.querySelector('[name="Церковь"]')?.value || '',
+        city: form.querySelector('[name="city"]')?.value || form.querySelector('[name="Город"]')?.value || '',
+        needsLunch: lunchInput.checked
+      };
+
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Отправка…';
+      }
+
+      try {
+        await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        alert('Спасибо! Ваша заявка на конференцию успешно отправлена.');
+        form.reset();
+      } catch (err) {
+        console.error('Ошибка отправки:', err);
+        alert('Не удалось отправить форму. Попробуйте ещё раз.');
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = originalText;
+        }
+      }
+    }, true);
+  })();
 
   /* оглавление исповедания: переход к пункту и подсветка текущего */
   var tocLinks = [].slice.call(document.querySelectorAll('.toc-link'));
