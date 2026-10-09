@@ -388,7 +388,7 @@ for f in ['logo-white.png','logo-black.png','favicon.png','apple-touch-icon.png'
           'person-roy.jpg','person-veremchuk-dan.jpg',
           'person-ivan-asya.jpg','person-nika.jpg','person-kristina.jpg','person-igor.jpg',
           'card-bible.jpg','person-marina.jpg','conf-reformation.jpg',
-          'ad-fontes-white.svg','ad-fontes-black.svg']:
+          'ad-fontes-white.svg','ad-fontes-black.svg','conf-poster.jpg']:
     shutil.copy(os.path.join('assets', f), os.path.join(OUT, 'assets', f))
 
 shutil.copy('favicon.ico', os.path.join(OUT, 'favicon.ico'))
@@ -552,8 +552,23 @@ def sec_form(d):
             f'<p class="form-note">{_html.escape(d.get("note",""))}</p>'
             f'</form></div></section>')
 
+
+def sec_logo(d):
+    """Крупный знак конференции и объяснение названия."""
+    return (f'  <section class="sec sec--dark logo-sec"><div class="wrap narrow">'
+            f'<img class="conf-logo" src="/assets/{d["image"]}" alt="{_html.escape(d.get("alt",""))}">'
+            f'<p class="logo-translate">{_html.escape(d.get("translate",""))}</p>'
+            f'{_p(d["text"])}</div></section>')
+
+def sec_poster(d):
+    cap = f'<figcaption>{_html.escape(d["caption"])}</figcaption>' if d.get('caption') else ''
+    return (f'  <section class="sec"><div class="wrap narrow">'
+            f'<figure class="poster"><img src="/assets/{d["image"]}" '
+            f'alt="{_html.escape(d.get("alt",""))}" loading="lazy">{cap}</figure>'
+            f'</div></section>')
+
 SECTIONS = {'speakers': sec_speakers, 'schedule': sec_schedule, 'place': sec_place,
-            'cards': sec_cards, 'text': sec_text, 'cta': sec_cta, 'form': sec_form}
+            'cards': sec_cards, 'text': sec_text, 'cta': sec_cta, 'form': sec_form, 'logo': sec_logo, 'poster': sec_poster}
 
 def _subst(obj, url):
     """Подставляет адрес регистрации ДО сборки разметки — иначе проверка

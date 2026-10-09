@@ -515,6 +515,30 @@ span.person-mark{
 .next h2{margin:0 0 .5em}
 .next-thumb{width:100%;max-width:520px;aspect-ratio:3/2;object-fit:cover;margin:0 0 20px;background:var(--stone)}
 
+/* крупный знак конференции */
+.logo-sec{text-align:center}
+.conf-logo{
+  display:block;margin:0 auto clamp(18px,2.4vw,28px);
+  width:auto;height:clamp(110px,15vw,210px);
+}
+.logo-translate{
+  font-family:var(--sans);font-size:13px;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent);margin:0 0 clamp(22px,2.6vw,32px);
+}
+.logo-sec p{text-align:left}
+
+/* афиша конференции */
+.poster{margin:0;text-align:center}
+.poster img{
+  display:block;width:100%;max-width:520px;height:auto;margin:0 auto;
+  border:1px solid var(--line);
+}
+.poster figcaption{
+  font-family:var(--sans);font-size:15px;color:var(--muted);
+  margin-top:14px;
+}
+
 /* ---------- программа мероприятия ---------- */
 .runlist{border-top:2px solid var(--ink)}
 .run{display:grid;grid-template-columns:120px 1fr;gap:clamp(18px,2.5vw,36px);
@@ -915,17 +939,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
   cursor: pointer !important;
 }
 
-/* ============================================================
-   Блюр и блокировка блока "Спикеры" — пока состав не объявлен.
-   Остальные разделы страницы должны остаться читаемыми,
-   иначе под блюр попадают программа, место и кнопка регистрации.
-   ============================================================ */
-.event-page section:has(.people) {
-  filter: blur(8px) !important;
-  pointer-events: none !important;
-  user-select: none !important;
-  opacity: 0.5 !important;
-}
+
 
    /* Расширение блока заголовка события для переноса в 1-2 строки */
 .event-hero h1,
