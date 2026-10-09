@@ -771,6 +771,27 @@ for e in events:
 
 
 
+
+# --- перенаправления со старых адресов ---
+for e in events:
+    for old in e.get('aliases', []):
+        new_url = f"{DOMAIN}/events/{e['slug']}"
+        open(os.path.join(OUT, 'events', old + '.html'), 'w', encoding='utf-8').write(
+f"""<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>{_html.escape(e['title'])} | Библейская церковь, Брест</title>
+<link rel="canonical" href="{new_url}">
+<meta name="robots" content="noindex">
+<meta http-equiv="refresh" content="0; url={new_url}">
+<script>location.replace({new_url!r});</script>
+</head>
+<body><p>Страница переехала: <a href="{new_url}">{new_url}</a></p></body>
+</html>
+""")
+        print(f'  events/{old}.html → /events/{e["slug"]}  (перенаправление)')
+
 # ================= СТРАНИЦА 404 =================
 body_404 = """  <section class="hero hero--page hero--flat">
     <div class="wrap">
