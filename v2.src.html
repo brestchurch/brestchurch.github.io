@@ -916,10 +916,11 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
 }
 
 /* ============================================================
-   Блюр и блокировка блока "Спикеры" и всех секций после него
+   Блюр и блокировка блока "Спикеры" — пока состав не объявлен.
+   Остальные разделы страницы должны остаться читаемыми,
+   иначе под блюр попадают программа, место и кнопка регистрации.
    ============================================================ */
-.event-page section:has(.people),
-.event-page section:has(.people) ~ section {
+.event-page section:has(.people) {
   filter: blur(8px) !important;
   pointer-events: none !important;
   user-select: none !important;
