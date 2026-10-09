@@ -382,20 +382,30 @@ for route, fname, title, desc in PAGES:
     print(f'{fname:20} {len(html.encode())/1024:6.0f} КБ')
 
 # ---------- картинки ----------
+missing_assets = []
 os.makedirs(os.path.join(OUT, 'assets'), exist_ok=True)
 for f in ['logo-white.png','logo-black.png','favicon.png','apple-touch-icon.png','erip-qr.png','person-simonchik.jpg',
           'person-konyuchko.jpg','person-veremchuk-d.jpg','person-demidovich.jpg',
           'person-roy.jpg','person-veremchuk-dan.jpg',
           'person-ivan-asya.jpg','person-nika.jpg','person-kristina.jpg','person-igor.jpg',
           'card-bible.jpg','person-marina.jpg','conf-reformation.jpg',
-          'ad-fontes-white.svg','ad-fontes-black.svg','conf-poster.jpg']:
-    shutil.copy(os.path.join('assets', f), os.path.join(OUT, 'assets', f))
+          'ad-fontes-white.svg','ad-fontes-black.svg']:
+    src_asset = os.path.join('assets', f)
+    if not os.path.exists(src_asset):
+        # не валим всю сборку из-за одной картинки — только предупреждаем
+        missing_assets.append(f)
+        continue
+    shutil.copy(src_asset, os.path.join(OUT, 'assets', f))
 
 shutil.copy('favicon.ico', os.path.join(OUT, 'favicon.ico'))
 
 # файл привязки домена — без него GitHub Pages вернётся на brestchurch.github.io
 open(os.path.join(OUT, 'CNAME'), 'w', encoding='utf-8').write('biblechurch.by\n')
 
+
+if missing_assets:
+    print('\n  ВНИМАНИЕ: нет файлов в папке assets — ' + ', '.join(missing_assets))
+    print('  Страницы собраны, но эти картинки на сайте не появятся.\n')
 
 # ================= СОБЫТИЯ =================
 import json, html as _html
