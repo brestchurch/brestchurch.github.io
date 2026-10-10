@@ -389,7 +389,7 @@ for f in ['logo-white.png','logo-black.png','favicon.png','apple-touch-icon.png'
           'person-roy.jpg','person-veremchuk-dan.jpg',
           'person-ivan-asya.jpg','person-nika.jpg','person-kristina.jpg','person-igor.jpg',
           'card-bible.jpg','person-marina.jpg','conf-reformation.jpg',
-          'ad-fontes-white.svg','ad-fontes-black.svg']:
+          'ad-fontes-white.svg','ad-fontes-black.svg','conf-poster.jpg']:
     src_asset = os.path.join('assets', f)
     if not os.path.exists(src_asset):
         # не валим всю сборку из-за одной картинки — только предупреждаем
@@ -418,7 +418,7 @@ def ru_date(iso):
     y, m, d = (int(x) for x in iso.split('-'))
     return f'{d} {MONTHS[m-1]} {y}'
 
-def shell(title, desc, canonical, body_html, schema=SCHEMA, extra_js=''):
+def shell(title, desc, canonical, body_html, schema=SCHEMA, extra_js='', og=None):
     parts = [
       '<!DOCTYPE html>', '<html lang="ru">', '<head>',
       '<meta charset="utf-8">',
@@ -429,9 +429,9 @@ def shell(title, desc, canonical, body_html, schema=SCHEMA, extra_js=''):
       '<meta name="theme-color" content="#14120f">',
       f'<meta property="og:title" content="{title}">',
       f'<meta property="og:description" content="{desc}">',
-      f'<meta property="og:image" content="{og_image(body_html)}">',
+      f'<meta property="og:image" content="{og or og_image(body_html)}">',
       '<meta name="twitter:card" content="summary_large_image">',
-      f'<meta name="twitter:image" content="{og_image(body_html)}">',
+      f'<meta name="twitter:image" content="{og or og_image(body_html)}">',
       '<meta property="og:type" content="article">',
       f'<meta property="og:url" content="{DOMAIN}{canonical}">',
       '<meta property="og:locale" content="ru_RU">',
@@ -777,7 +777,8 @@ for e in events:
 
     open(os.path.join(OUT, 'events', e['slug'] + '.html'), 'w', encoding='utf-8').write(
       shell(f"{e['title']} | Библейская церковь, Брест", e['summary'],
-            f"/events/{e['slug']}", body, schema=ev_schema).replace(
+            f"/events/{e['slug']}", body, schema=ev_schema,
+            og=(DOMAIN + '/assets/' + e['og_image']) if e.get('og_image') else None).replace(
               '<div class="page">', '<div class="page event-page">', 1))
     print(f'  events/{e["slug"]}.html')
 
