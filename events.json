@@ -160,7 +160,8 @@
       "aliases": [
         "konferenciya-den-reformacii-2026"
       ],
-      "og_image": "conf-poster.jpg"
+      "og_image": "conf-hero.jpg",
+      "hero_pos_mobile": "62% 45%"
     },
     {
       "slug": "reformaciya-2026",

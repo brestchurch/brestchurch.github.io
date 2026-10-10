@@ -626,6 +626,12 @@ span.person-mark{
   .form-grid{grid-template-columns:1fr}
 }
 
+/* кадрирование обложки события: своё для широких и узких экранов */
+.hero.hero--tall{background-position:var(--hero-pos, center 45%)}
+@media (max-width:767px){
+  .hero.hero--tall{background-position:var(--hero-pos-mobile, var(--hero-pos, center 45%))}
+}
+
 /* шапка события с фотографией — примерно полэкрана, как на главной */
 .hero.hero--tall{
   min-height:min(62vh,620px);

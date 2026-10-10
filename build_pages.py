@@ -734,8 +734,11 @@ for e in events:
         "organizer":{"@type":"Organization","name":"Библейская церковь г. Бреста","url":DOMAIN+"/"}
     }, ensure_ascii=False, indent=2) + '</script>')
 
+    # кадрирование задаётся отдельно для широких и узких экранов
     hero_style = (f' style="background-image:url(\'{media_src(e["hero"])}\');'
-                  f'background-position:{e.get("hero_pos","center 45%")}"') if e.get('hero') else ''
+                  f'--hero-pos:{e.get("hero_pos","center 45%")};'
+                  f'--hero-pos-mobile:{e.get("hero_pos_mobile", e.get("hero_pos","center 45%"))}"'
+                  ) if e.get('hero') else ''
     hero_cls  = 'hero hero--page' + (' hero--tall' if e.get('hero') else ' hero--flat')
     logo_img  = (f'<img class="event-logo" src="/assets/{e["logo"]}" alt="{_html.escape(e.get("logo_alt",""))}">'
                  if e.get('logo') else '')
