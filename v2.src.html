@@ -515,10 +515,20 @@ span.person-mark{
 .next h2{margin:0 0 .5em}
 .next-thumb{width:100%;max-width:520px;aspect-ratio:3/2;object-fit:cover;margin:0 0 20px;background:var(--stone)}
 
+/* контакт для вопросов по событию */
+.contact-line{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;margin:0}
+.contact-name{font-weight:600;color:var(--ink)}
+.contact-tel{
+  font-size:clamp(20px,1.5vw + 10px,26px);
+  font-variant-numeric:tabular-nums;color:var(--ink);
+  border-bottom:1px solid var(--line);padding-bottom:2px;
+}
+.contact-tel:hover{color:var(--label);border-bottom-color:var(--label)}
+
 /* крупный знак конференции */
 .logo-sec{text-align:center}
 .conf-logo{
-  display:block;margin:0 auto calc(clamp(18px,2.4vw,28px) + 24px);
+  display:block;margin:0 auto clamp(18px,2.4vw,28px);
   width:auto;height:clamp(110px,15vw,210px);
 }
 .logo-translate{

@@ -577,8 +577,20 @@ def sec_poster(d):
             f'alt="{_html.escape(d.get("alt",""))}" loading="lazy">{cap}</figure>'
             f'</div></section>')
 
+
+def sec_contact(d):
+    """Контакт для вопросов по событию."""
+    tel = ''.join(ch for ch in d['phone'] if ch.isdigit() or ch == '+')
+    return (f'  <section class="sec sec--tight"><div class="wrap narrow">'
+            f'<div class="sec-head">{_label(d)}<h2>{_html.escape(d["title"])}</h2></div>'
+            f'{_p(d.get("text", []))}'
+            f'<p class="contact-line">'
+            f'<span class="contact-name">{_html.escape(d["name"])}</span>'
+            f'<a class="contact-tel" href="tel:{tel}">{_html.escape(d["phone"])}</a>'
+            f'</p></div></section>')
+
 SECTIONS = {'speakers': sec_speakers, 'schedule': sec_schedule, 'place': sec_place,
-            'cards': sec_cards, 'text': sec_text, 'cta': sec_cta, 'form': sec_form, 'logo': sec_logo, 'poster': sec_poster}
+            'cards': sec_cards, 'text': sec_text, 'cta': sec_cta, 'form': sec_form, 'logo': sec_logo, 'poster': sec_poster, 'contact': sec_contact}
 
 def _subst(obj, url):
     """Подставляет адрес регистрации ДО сборки разметки — иначе проверка
