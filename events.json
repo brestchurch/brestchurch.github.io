@@ -153,8 +153,8 @@
           }
         }
       ],
-      "hero": "conf-reformation.jpg",
-      "hero_pos": "center 38%",
+      "hero": "conf-hero.jpg",
+      "hero_pos": "center 42%",
       "registration_url": "https://forms.gle/xqoEGQXk8gTfPmwR9",
       "registration_label": "Зарегистрироваться",
       "aliases": [
