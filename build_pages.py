@@ -466,6 +466,16 @@ def _p(items, indent='      '):
 def _ext(url):
     return ' target="_blank" rel="noopener"' if str(url).startswith('http') else ''
 
+
+def _rich(t):
+    """Экранирует текст и превращает *фрагмент* в курсив."""
+    import re as _re
+    out = _html.escape(t)
+    return _re.sub(r'\*([^*]+)\*', r'<em>\1</em>', out)
+
+def _pr(items, indent='      '):
+    return (chr(10)+indent).join(f'<p>{_rich(x)}</p>' for x in items)
+
 def _label(d, default=''):
     t = d.get('label', default)
     return f'<span class="label">{_html.escape(t)}</span>' if t else ''
@@ -565,10 +575,14 @@ def sec_form(d):
 
 def sec_logo(d):
     """Крупный знак конференции и объяснение названия."""
+    tr = f'<p class="logo-translate">{_html.escape(d["translate"])}</p>' if d.get('translate') else ''
+    epi = ''
+    if d.get('epigraph'):
+        ref = f'<cite>{_html.escape(d["epigraph"].get("ref",""))}</cite>' if d['epigraph'].get('ref') else ''
+        epi = (f'<blockquote class="epigraph">{_rich(d["epigraph"]["text"])}{ref}</blockquote>')
     return (f'  <section class="sec sec--dark logo-sec"><div class="wrap narrow">'
             f'<img class="conf-logo" src="/assets/{d["image"]}" alt="{_html.escape(d.get("alt",""))}">'
-            f'<p class="logo-translate">{_html.escape(d.get("translate",""))}</p>'
-            f'{_p(d["text"])}</div></section>')
+            f'{tr}{epi}{_pr(d["text"])}</div></section>')
 
 def sec_poster(d):
     cap = f'<figcaption>{_html.escape(d["caption"])}</figcaption>' if d.get('caption') else ''

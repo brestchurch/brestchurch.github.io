@@ -525,6 +525,23 @@ span.person-mark{
 }
 .contact-tel:hover{color:var(--label);border-bottom-color:var(--label)}
 
+/* эпиграф — стих Писания над текстом */
+.epigraph{
+  margin:0 0 clamp(26px,3vw,38px);
+  padding:0 0 0 clamp(16px,2vw,24px);
+  border-left:2px solid var(--accent);
+  font-style:italic;
+  font-size:clamp(19px,1.1vw + 13px,25px);
+  line-height:1.45;color:var(--on-dark);text-align:left;
+}
+.epigraph cite{
+  display:block;margin-top:.7em;
+  font-family:var(--sans);font-style:normal;
+  font-size:13px;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--accent);
+}
+.logo-sec em{font-style:italic}
+
 /* крупный знак конференции */
 .logo-sec{text-align:center}
 .conf-logo{
