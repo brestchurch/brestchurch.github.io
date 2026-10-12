@@ -8,6 +8,23 @@ DOMAIN = 'https://biblechurch.by'
 
 s = open(SRC, encoding='utf-8').read()
 
+
+# ---------- политика безопасности ----------
+# Разрешаем только те источники, которые сайт действительно использует.
+CSP = (
+    "default-src 'self'; "
+    "base-uri 'self'; object-src 'none'; "
+    "script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; "
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+    "font-src 'self' https://fonts.gstatic.com; "
+    "img-src 'self' data: https://images.unsplash.com; "
+    "connect-src 'self' https://formsubmit.co https://cloudflareinsights.com "
+    "https://static.cloudflareinsights.com; "
+    "form-action 'self' https://formsubmit.co; "
+    "frame-src 'none'; "
+    "upgrade-insecure-requests"
+)
+
 # ---------- страницы: путь -> (файл, заголовок, описание) ----------
 PAGES = [
  ('/',             'index.html',        'Библейская церковь | Брест, Беларусь',
@@ -84,12 +101,12 @@ COMMON_JS = """
   /* ---- обработка отправок форм ---- */
   var MAIL_TO = 'biblechurch.by@gmail.com';
   var MAIL_ENDPOINT = 'https://formsubmit.co/ajax/' + MAIL_TO;
-  var GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx4drB36dLPeBsTRo5ePVsqoGHwu0F9-0IURNODmMFW-ATFhEumoQodTjDzU18P9iHPMQ/exec';
 
   [].slice.call(document.querySelectorAll('.js-form')).forEach(function(f){
     var status = f.querySelector('.form-status');
     var btn    = f.querySelector('button[type=submit]');
     var label  = btn ? btn.textContent : '';
+    var opened = Date.now();        /* боты отправляют форму мгновенно */
 
     function say(text, state){
       if (!status) return;
@@ -101,55 +118,12 @@ COMMON_JS = """
     f.addEventListener('submit', function(e){
       e.preventDefault();
 
-      // Проверяем, является ли форма регистрацией на конференцию
-      var lunchEl = f.querySelector('#reg-lunch') || 
-                    f.querySelector('#lunch') || 
-                    f.querySelector('[name="lunch"]') || 
-                    f.querySelector('[name="Нужен обед"]');
-
-      var isConference = !!lunchEl || f.innerHTML.indexOf('Ad Fontes') !== -1;
-
-      // ----------------------------------------------------
-      // 1. ОТПРАВКА В GOOGLE ТАБЛИЦУ (для конференции)
-      // ----------------------------------------------------
-      if (isConference) {
-        if (btn) { btn.disabled = true; btn.textContent = 'Отправка…'; }
-
-        var payload = {
-          firstName: f.querySelector('[name="name"]')?.value || f.querySelector('[name="Имя"]')?.value || '',
-          lastName: f.querySelector('[name="surname"]')?.value || f.querySelector('[name="Фамилия"]')?.value || '',
-          phone: f.querySelector('[name="phone"]')?.value || f.querySelector('[name="Телефон"]')?.value || '',
-          telegram: f.querySelector('[name="tg"]')?.value || f.querySelector('[name="Телеграм"]')?.value || '',
-          church: f.querySelector('[name="church"]')?.value || f.querySelector('[name="Церковь"]')?.value || '',
-          city: f.querySelector('[name="city"]')?.value || f.querySelector('[name="Город"]')?.value || '',
-          needsLunch: lunchEl ? lunchEl.checked : false
-        };
-
-        fetch(GOOGLE_SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        })
-        .then(function(){
-          alert('Спасибо! Ваша заявка на конференцию успешно отправлена.');
-          f.reset();
-        })
-        .catch(function(err){
-          console.error('Ошибка:', err);
-          alert('Произошла ошибка при отправке. Попробуйте еще раз.');
-        })
-        .finally(function(){
-          if (btn) { btn.disabled = false; btn.textContent = label; }
-        });
-
-        return; // Полностью отменяет последующий вызов FormSubmit
+      var honey = f.querySelector('[name=_honey]');
+      if (honey && honey.value) return;                  /* приманка заполнена */
+      if (Date.now() - opened < 3000){
+        say('Проверьте, пожалуйста, поля и отправьте ещё раз.', 'err');
+        return;
       }
-
-      // ----------------------------------------------------
-      // 2. ОТПРАВКА НА FORMSUBMIT (для обычных обращений)
-      // ----------------------------------------------------
-      if (f.querySelector('[name=_honey]') && f.querySelector('[name=_honey]').value) return;
 
       if (!f.checkValidity()){
         say('Заполните имя, контакт и текст сообщения.', 'err');
@@ -164,16 +138,25 @@ COMMON_JS = """
       data._template = 'table';
 
       if (btn) { btn.disabled = true; btn.textContent = 'Отправляем…'; }
-      if (status) status.hidden = true;
+      say('Отправляем…', 'wait');
 
       fetch(MAIL_ENDPOINT, {
         method: 'POST',
         headers: {'Content-Type':'application/json', 'Accept':'application/json'},
         body: JSON.stringify(data)
       })
-      .then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); })
-      .then(function(){
+      .then(function(r){
+        return r.json().catch(function(){ return {}; }).then(function(j){
+          return { ok: r.ok, body: j };
+        });
+      })
+      .then(function(res){
+        /* успех подтверждаем по ответу сервиса, а не по одному коду HTTP */
+        if (!res.ok || String(res.body.success) !== 'true'){
+          throw new Error(res.body.message || 'сервис отклонил отправку');
+        }
         f.reset();
+        opened = Date.now();
         say('Спасибо, сообщение отправлено. Мы ответим на указанный вами контакт.', 'ok');
       })
       .catch(function(){
@@ -319,6 +302,8 @@ for route, fname, title, desc in PAGES:
       '<!DOCTYPE html>', '<html lang="ru">', '<head>',
       '<meta charset="utf-8">',
       '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
+      f'<meta http-equiv="Content-Security-Policy" content="{CSP}">',
+      '<meta name="referrer" content="strict-origin-when-cross-origin">',
       f'<title>{title}</title>',
       f'<meta name="description" content="{desc}">',
       f'<link rel="canonical" href="{DOMAIN}/{"" if fname=="index.html" else fname[:-5]}">',
@@ -423,6 +408,8 @@ def shell(title, desc, canonical, body_html, schema=SCHEMA, extra_js='', og=None
       '<!DOCTYPE html>', '<html lang="ru">', '<head>',
       '<meta charset="utf-8">',
       '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
+      f'<meta http-equiv="Content-Security-Policy" content="{CSP}">',
+      '<meta name="referrer" content="strict-origin-when-cross-origin">',
       f'<title>{title}</title>',
       f'<meta name="description" content="{desc}">',
       f'<link rel="canonical" href="{DOMAIN}{canonical}">',
@@ -811,6 +798,7 @@ f"""<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="{CSP}">
 <title>{_html.escape(e['title'])} | Библейская церковь, Брест</title>
 <link rel="canonical" href="{new_url}">
 <meta name="robots" content="noindex">
