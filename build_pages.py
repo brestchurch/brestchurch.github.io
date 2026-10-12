@@ -389,7 +389,7 @@ for f in ['logo-white.png','logo-black.png','favicon.png','apple-touch-icon.png'
           'person-roy.jpg','person-veremchuk-dan.jpg',
           'person-ivan-asya.jpg','person-nika.jpg','person-kristina.jpg','person-igor.jpg',
           'card-bible.jpg','person-marina.jpg','conf-reformation.jpg',
-          'ad-fontes-white.svg','ad-fontes-black.svg','conf-poster.jpg','conf-hero.jpg']:
+          'ad-fontes-white.svg','ad-fontes-black.svg','conf-poster.jpg','conf-hero.jpg','conf-og.jpg']:
     src_asset = os.path.join('assets', f)
     if not os.path.exists(src_asset):
         # не валим всю сборку из-за одной картинки — только предупреждаем
