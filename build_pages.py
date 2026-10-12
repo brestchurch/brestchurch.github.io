@@ -312,7 +312,7 @@ for route, fname, title, desc in PAGES:
                   r'<a class="toc-link" href="#\1">', body)
 
     nav = header
-    cur_target = './' if fname == 'index.html' else fname
+    cur_target = '/' if fname == 'index.html' else '/' + fname[:-5]   # без .html, как остальные ссылки
     nav = nav.replace(f'href="#{route}"', f'href="{cur_target}" aria-current="page" class="is-current"')
 
     parts = [
