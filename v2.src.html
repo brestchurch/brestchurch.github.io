@@ -800,7 +800,11 @@ span.person-mark{
 .num{font-variant-numeric:tabular-nums;letter-spacing:.02em;word-break:break-word;font-weight:600}
 
 /* ---------- подвал ---------- */
-.footer{background:var(--ink);color:var(--on-dark);padding:clamp(56px,6vw,96px) 0 0}
+.footer{
+  background:var(--ink);color:var(--on-dark);
+  padding:clamp(56px,6vw,96px) 0 0;
+  border-top:1px solid rgba(255,255,255,.18);
+}
 .footer h4{color:#fff;font-size:var(--fs-label);font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:18px}
 .footer .label{color:var(--accent)}
 .footer a:hover{color:var(--accent)}
