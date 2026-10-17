@@ -823,6 +823,12 @@ span.person-mark{
   transition:background-color .25s,border-color .25s,color .25s;
 }
 .social a:hover{background:#fff;border-color:#fff;color:var(--ink)}
+.footer .legal{
+  font-size:13px;line-height:1.5;
+  color:rgba(230,226,218,.62);
+  margin:0 0 14px;
+}
+.footer .legal:last-child{margin:14px 0 0}
 .footer-bottom{
   border-top:1px solid rgba(255,255,255,.16);
   padding:24px 0;display:flex;justify-content:space-between;
@@ -1982,7 +1988,6 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
       <div class="footer-logo">
         <img src="data:image/png;base64,__LOGO_WHITE__" alt="Библейская церковь">
         <p class="footer-slogan">К недоступному Богу, через доступную церковь</p>
-        <p>Библейская церковь г. Бреста.<br>Воскресные собрания в 11:00.</p>
         <div class="social">
           <a href="https://www.facebook.com/brestbiblechurch/" target="_blank" rel="noopener">Facebook</a>
           <a href="https://www.instagram.com/brestbiblechurch/" target="_blank" rel="noopener">Instagram</a>
@@ -1998,14 +2003,16 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
 
       <div>
         <h4>Контакты</h4>
+        <p class="legal">Свидетельство о гос. регистрации №978<br>от 07.09.2016 решением Брестского облисполкома</p>
         <ul>
           <li><a href="mailto:biblechurch.by@gmail.com">biblechurch.by@gmail.com</a></li>
         </ul>
+        <p class="legal">© <span id="year">2026</span> РО Библейская церковь ЕХБ г. Бреста</p>
       </div>
     </div>
 
     <div class="footer-bottom">
-      <p>© <span id="year">2026</span> Библейская церковь г. Бреста</p>
+      <p>Библейская церковь г. Бреста</p>
       <nav aria-label="Навигация в подвале">
         <a href="#/">Главная</a>
         <a href="#/visit">Впервые у нас</a>
