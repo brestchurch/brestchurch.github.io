@@ -831,12 +831,12 @@ span.person-mark{
 .footer .legal:last-child{margin:14px 0 0}
 .footer-bottom{
   border-top:1px solid rgba(255,255,255,.16);
-  padding:24px 0;display:flex;justify-content:space-between;
-  gap:16px 32px;flex-wrap:wrap;font-size:15px;color:var(--on-dark-soft);
+  padding:22px 0;display:flex;justify-content:space-between;
+  gap:12px 24px;flex-wrap:wrap;font-size:14px;color:var(--on-dark-soft);
 }
 .footer-bottom p{margin:0}
-.footer-bottom nav{display:flex;gap:20px 28px;flex-wrap:wrap}
-.footer-bottom nav a{color:var(--on-dark)}
+.footer-bottom nav{display:flex;gap:10px clamp(12px,1.5vw,22px);flex-wrap:wrap;width:100%;justify-content:space-between}
+.footer-bottom nav a{color:var(--on-dark);font-size:clamp(12px,.9vw + 3px,14px);white-space:nowrap}
 
 /* ---------- наверх ---------- */
 .to-top{
@@ -2012,7 +2012,6 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
     </div>
 
     <div class="footer-bottom">
-      <p>Библейская церковь г. Бреста</p>
       <nav aria-label="Навигация в подвале">
         <a href="#/">Главная</a>
         <a href="#/visit">Впервые у нас</a>
