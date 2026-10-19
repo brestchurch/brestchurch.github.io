@@ -894,7 +894,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
   }
   .nav a.is-current,.header.is-solid .nav a.is-current{color:var(--label);border-bottom:0}
   /* стрелка справа у каждого пункта; цвет берёт от текста, у текущего — коричневая */
-  .nav ul a{display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .nav ul a,.header.is-solid .nav ul a{display:flex;align-items:center;justify-content:space-between;gap:16px}
   .nav ul a::after{
     content:"";flex:none;width:11px;height:11px;margin-right:6px;
     border-top:1.5px solid currentColor;border-right:1.5px solid currentColor;
@@ -904,6 +904,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
   .nav-social{display:block;margin-top:auto;padding-top:40px}
   .nav-social p{margin:0 0 14px;font-size:15px;color:var(--muted)}
   .nav-social-links{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  @media (min-width:600px){ .nav-social-links{grid-template-columns:repeat(4,1fr);max-width:640px} }
   .header .nav .nav-social a{
     display:flex;align-items:center;justify-content:center;
     min-height:48px;padding:0 14px;
