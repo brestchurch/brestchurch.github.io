@@ -217,6 +217,8 @@ h4{
 .header.is-solid .nav a{color:var(--ink)}
 .header.is-solid .nav a:hover,.header.is-solid .nav a.is-current{border-bottom-color:var(--ink)}
 
+.nav-social{display:none}
+
 .burger{
   display:none;position:relative;z-index:210;
   width:48px;height:48px;padding:0;margin-right:-10px;
@@ -878,6 +880,8 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
     opacity:0;visibility:hidden;transform:translateY(-8px);
     transition:opacity .28s ease,transform .28s ease,visibility .28s;
     overflow-y:auto;
+    display:flex;flex-direction:column;
+    padding-bottom:calc(32px + env(safe-area-inset-bottom, 0px));
   }
   .nav-open .nav{opacity:1;visibility:visible;transform:none}
   .nav ul{flex-direction:column;align-items:stretch;gap:0}
@@ -889,6 +893,26 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
     color:var(--ink);padding:20px 0;border-bottom:0;
   }
   .nav a.is-current,.header.is-solid .nav a.is-current{color:var(--label);border-bottom:0}
+  /* стрелка справа у каждого пункта; цвет берёт от текста, у текущего — коричневая */
+  .nav ul a{display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .nav ul a::after{
+    content:"";flex:none;width:11px;height:11px;margin-right:6px;
+    border-top:1.5px solid currentColor;border-right:1.5px solid currentColor;
+    transform:rotate(45deg);
+  }
+  /* соцсети прижаты к низу экрана */
+  .nav-social{display:block;margin-top:auto;padding-top:40px}
+  .nav-social p{margin:0 0 14px;font-size:15px;color:var(--muted)}
+  .nav-social-links{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .header .nav .nav-social a{
+    display:flex;align-items:center;justify-content:center;
+    min-height:48px;padding:0 14px;
+    border:1px solid var(--line);border-radius:999px;
+    font-family:var(--sans);font-size:15px;font-weight:600;letter-spacing:0;
+    color:var(--ink);
+    transition:background-color .25s,border-color .25s,color .25s;
+  }
+  .header .nav .nav-social a:hover{background:var(--ink);border-color:var(--ink);color:#fff}
   .nav-open{overflow:hidden}
   /* при открытом меню фон белый — логотип должен стать чёрным */
   .nav-open .brand{color:var(--ink)}
@@ -1018,6 +1042,15 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
           <li><a href="#/events">События</a></li>
           <li><a href="#/contacts">Контакты</a></li>
         </ul>
+        <div class="nav-social">
+          <p>Мы в соцсетях</p>
+          <div class="nav-social-links">
+            <a href="https://www.instagram.com/brestbiblechurch/" target="_blank" rel="noopener">Instagram</a>
+            <a href="https://www.youtube.com/channel/UCNiK1NCGnS-ebp_00e8JMTg" target="_blank" rel="noopener">YouTube</a>
+            <a href="https://t.me/brestbiblechurch" target="_blank" rel="noopener">Telegram</a>
+            <a href="https://www.facebook.com/brestbiblechurch/" target="_blank" rel="noopener">Facebook</a>
+          </div>
+        </div>
       </nav>
 
       <button class="burger" id="navToggle" aria-label="Открыть меню" aria-expanded="false" aria-controls="siteNav">
@@ -2085,7 +2118,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
   var burger = document.getElementById('navToggle');
   var toTop  = document.getElementById('toTop');
   var pages  = [].slice.call(document.querySelectorAll('.page'));
-  var links  = [].slice.call(document.querySelectorAll('.nav a'));
+  var links  = [].slice.call(document.querySelectorAll('.nav ul a'));
 
   document.getElementById('year').textContent = new Date().getFullYear();
 
