@@ -601,9 +601,14 @@ def _subst(obj, url):
     if isinstance(obj, str):   return obj.replace('REGISTRATION_URL', url)
     return obj
 
-def render_sections(e):
+# у прошедшего события эти блоки теряют смысл: регистрация, взнос, «напишите нам»
+PAST_HIDDEN_SECTIONS = {'cta', 'form', 'contact'}
+
+def render_sections(e, is_past=False):
     url = e.get('registration_url', '#')
     secs = _subst(e.get('sections', []), url)
+    if is_past:
+        secs = [x for x in secs if x['type'] not in PAST_HIDDEN_SECTIONS]
     return (chr(10)*2).join(SECTIONS[s['type']](s) for s in secs)
 
 data = json.load(open('events.json', encoding='utf-8'))
@@ -612,6 +617,24 @@ today = _date.today().isoformat()
 all_events = data['events']
 upcoming = sorted([e for e in all_events if e['date'] >= today], key=lambda e: e['date'])          # ближайшее первым
 past     = sorted([e for e in all_events if e['date'] <  today], key=lambda e: e['date'], reverse=True)  # свежее первым
+
+# ----- что показывать о будущих событиях -----
+# SHOW_UPCOMING = False: на сайте видны только прошедшие события (архив).
+#   Будущие события остаются в events.json, но их нет ни в ленте, ни в карте сайта,
+#   и отдельные страницы для них не создаются. Исключение — события с
+#   "direct_link": true: их страница доступна по прямой ссылке (например, для регистрации),
+#   но нигде на сайте не упоминается и закрыта от поисковиков.
+#   Когда дата события пройдёт, оно само появится в архиве при ближайшей сборке.
+# SHOW_UPCOMING = True: вернуть прежний вид — ближайшее событие сверху, план, архив.
+SHOW_UPCOMING = False
+
+if SHOW_UPCOMING:
+    listed_upcoming = upcoming
+    unlisted = []
+else:
+    listed_upcoming = []
+    unlisted = [e for e in upcoming if e.get('direct_link')]
+hidden_count = len(upcoming) - len(listed_upcoming) - len(unlisted)
 
 def media_src(v):
     return v if v.startswith('http') else '/assets/' + v
@@ -631,8 +654,8 @@ def row(e):
 blocks = []
 
 # ближайшее событие выносим наверх крупным блоком
-if upcoming:
-    n = upcoming[0]
+if listed_upcoming:
+    n = listed_upcoming[0]
     media = f'<img class="next-thumb" src="{media_src(n["image"])}" alt="">' if n.get('image') else ''
     blocks.append(f"""    <section class="sec">
       <div class="wrap narrow">
@@ -649,7 +672,7 @@ if upcoming:
       </div>
     </section>""")
 
-rest = upcoming[1:]
+rest = listed_upcoming[1:]
 if rest:
     blocks.append("""    <section class="sec">
       <div class="wrap narrow">
@@ -664,7 +687,7 @@ if rest:
     </section>""")
 
 if past:
-    tone = ' sec--stone' if upcoming else ''
+    tone = ' sec--stone' if listed_upcoming else ''
     blocks.append(f"""    <section class="sec{tone}">
       <div class="wrap narrow">
         <div class="sec-head">
@@ -680,7 +703,7 @@ if past:
 if not blocks:
     blocks.append("""    <section class="sec">
       <div class="wrap narrow">
-        <p class="lead events-empty">Здесь будут появляться записи о конференциях, проповедях и встречах общины. Пока их нет — приходите на воскресное собрание в 11:00.</p>
+        <p class="lead events-empty">Здесь будут появляться записи о конференциях, проповедях и встречах общины, которые уже прошли.</p>
       </div>
     </section>""")
 
@@ -695,9 +718,12 @@ events_body = """  <section class="hero hero--page hero--events" style="backgrou
 
 open(os.path.join(OUT, 'events.html'), 'w', encoding='utf-8').write(
   shell('События церкви — конференции, проповеди, встречи | Библейская церковь, Брест',
-        'Предстоящие и прошедшие события Брестской Библейской церкви: конференции, проповеди, крещения и встречи общины.',
+        ('Предстоящие и прошедшие события Брестской Библейской церкви: конференции, проповеди, крещения и встречи общины.'
+         if SHOW_UPCOMING else
+         'Архив событий Брестской Библейской церкви: прошедшие конференции, проповеди, крещения и встречи общины.'),
         '/events', events_body))
-print(f'events.html          предстоящих: {len(upcoming)}, прошедших: {len(past)}')
+print(f'events.html          в ленте: будущих {len(listed_upcoming)}, прошедших {len(past)}'
+      f'  (скрыто будущих: {hidden_count}, по прямой ссылке: {len(unlisted)})')
 
 # папку пересоздаём, иначе удалённые из events.json записи останутся на сайте
 ev_dir = os.path.join(OUT, 'events')
@@ -707,7 +733,9 @@ os.makedirs(ev_dir, exist_ok=True)
 # копия внутрь папки: чтобы адрес со слешем (/events/) тоже открывался
 shutil.copy(os.path.join(OUT, 'events.html'), os.path.join(OUT, 'events', 'index.html'))
 
-events = all_events   # для карты сайта и отдельных страниц
+events  = past + listed_upcoming + unlisted   # для каких событий создаём страницы
+indexed = past + listed_upcoming              # какие попадают в карту сайта и поиск
+unlisted_slugs = {e['slug'] for e in unlisted}
 
 # --- отдельные страницы ---
 os.makedirs(os.path.join(OUT, 'events'), exist_ok=True)
@@ -744,7 +772,8 @@ for e in events:
     logo_img  = (f'<img class="event-logo" src="/assets/{e["logo"]}" alt="{_html.escape(e.get("logo_alt",""))}">'
                  if e.get('logo') else '')
     title_cls = ' class="h1--sub"' if e.get('logo') else ''
-    reg = e.get('registration_url')
+    is_past = e['date'] < today
+    reg = None if is_past else e.get('registration_url')   # после события кнопку регистрации не показываем
     hero_btn = (f'<div class="hero-action"><a class="btn btn--fill-light" href="{reg}"{_ext(reg)}>'
                 f'{_html.escape(e.get("registration_label","Зарегистрироваться"))}</a></div>') if reg else ''
     body = f"""  <section class="{hero_cls}"{hero_style}>
@@ -771,7 +800,7 @@ for e in events:
     </div>
   </section>
 
-{render_sections(e)}
+{render_sections(e, is_past)}
 
   <section class="sec sec--tight">
     <div class="wrap narrow">
@@ -779,12 +808,17 @@ for e in events:
     </div>
   </section>"""
 
-    open(os.path.join(OUT, 'events', e['slug'] + '.html'), 'w', encoding='utf-8').write(
-      shell(f"{e['title']} | Библейская церковь, Брест", e['summary'],
+    page_html = shell(f"{e['title']} | Библейская церковь, Брест", e['summary'],
             f"/events/{e['slug']}", body, schema=ev_schema,
             og=(DOMAIN + '/assets/' + e['og_image']) if e.get('og_image') else None).replace(
-              '<div class="page">', '<div class="page event-page">', 1))
-    print(f'  events/{e["slug"]}.html')
+              '<div class="page">', '<div class="page event-page">', 1)
+    is_unlisted = e['slug'] in unlisted_slugs
+    if is_unlisted:
+        # страница только по прямой ссылке: просим поисковики её не индексировать
+        page_html = page_html.replace('<meta name="theme-color"',
+                                      '<meta name="robots" content="noindex, nofollow">\n<meta name="theme-color"', 1)
+    open(os.path.join(OUT, 'events', e['slug'] + '.html'), 'w', encoding='utf-8').write(page_html)
+    print(f'  events/{e["slug"]}.html' + ('  (только по прямой ссылке)' if is_unlisted else ''))
 
 
 
@@ -851,7 +885,7 @@ for route, fname, _, _ in PAGES:
     pri = '1.0' if fname=='index.html' else ('0.3' if fname=='privacy.html' else '0.8')
     urls.append(f'  <url>\n    <loc>{loc}</loc>\n    <changefreq>monthly</changefreq>\n    <priority>{pri}</priority>\n  </url>')
 urls.append(f'  <url>\n    <loc>{DOMAIN}/events</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>')
-for e in events:
+for e in indexed:
     urls.append(f'  <url>\n    <loc>{DOMAIN}/events/{e["slug"]}</loc>\n    <changefreq>yearly</changefreq>\n    <priority>0.6</priority>\n  </url>')
 open(os.path.join(OUT,'sitemap.xml'),'w',encoding='utf-8').write(
  '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
