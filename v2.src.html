@@ -874,9 +874,11 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
   /* мобильное меню на весь экран */
   .burger{display:block}
   .nav{
-    position:fixed;inset:0;z-index:205;
+    /* меню начинается под шапкой: при прокрутке пункты не заезжают под логотип */
+    position:fixed;inset:var(--header-h) 0 0 0;z-index:205;
     background:var(--paper);
-    padding:calc(var(--header-h) + 24px) clamp(20px,6vw,40px) 40px;
+    padding:24px clamp(20px,6vw,40px) 40px;
+    overscroll-behavior:contain;
     opacity:0;visibility:hidden;transform:translateY(-8px);
     transition:opacity .28s ease,transform .28s ease,visibility .28s;
     overflow-y:auto;
@@ -914,6 +916,21 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--label);outline-offs
     transition:background-color .25s,border-color .25s,color .25s;
   }
   .header .nav .nav-social a:hover{background:var(--ink);border-color:var(--ink);color:#fff}
+  /* телефон в альбомной ориентации: экран низкий, делаем меню компактнее */
+  @media (max-height:520px){
+    .nav{padding-top:8px;padding-bottom:calc(20px + env(safe-area-inset-bottom, 0px))}
+    .nav a,.header.is-solid .nav a{font-size:22px;padding:11px 0}
+    .nav-social{padding-top:20px}
+    .nav-social p{margin-bottom:10px}
+    .header .nav .nav-social a{min-height:44px}
+  }
+  /* в альбомной ориентации соцсети ставим справа от пунктов — всё помещается без прокрутки */
+  @media (max-height:520px) and (orientation:landscape){
+    .nav{flex-direction:row;align-items:flex-start;gap:clamp(28px,5vw,56px)}
+    .nav ul{flex:1 1 auto;min-width:0}
+    .nav-social{flex:0 0 clamp(240px,34vw,320px);margin-top:0;padding-top:14px}
+    .nav-social-links{grid-template-columns:1fr 1fr;max-width:none}
+  }
   .nav-open{overflow:hidden}
   /* при открытом меню фон белый — логотип должен стать чёрным */
   .nav-open .brand{color:var(--ink)}
